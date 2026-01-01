@@ -1,5 +1,4 @@
 import Foundation
-import Foundation
 import GRDB
 
 /// Clean, simple database manager using GRDB
@@ -107,7 +106,16 @@ actor DatabaseManager {
                 END
                 """)
         }
-        
+
+        // Migration v3: Add missing project columns
+        migrator.registerMigration("v3_project_fields") { db in
+            try db.alter(table: "projects") { t in
+                t.add(column: "color", .text)
+                t.add(column: "icon", .text)
+                t.add(column: "settings", .text)
+            }
+        }
+
         try migrator.migrate(db)
     }
     

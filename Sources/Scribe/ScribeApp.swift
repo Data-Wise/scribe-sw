@@ -14,5 +14,33 @@ struct ScribeApp: App {
             MainView()
                 .environmentObject(appState)
         }
+        .commands {
+            // File menu commands
+            CommandGroup(after: .newItem) {
+                Button("New Note") {
+                    Task {
+                        await appState.createNewNote()
+                    }
+                }
+                .keyboardShortcut("n", modifiers: .command)
+            }
+            
+            // View menu commands
+            CommandGroup(after: .sidebar) {
+                Button("Toggle Sidebar") {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        appState.showSidebar.toggle()
+                    }
+                }
+                .keyboardShortcut("[", modifiers: .command)
+                
+                Button("Toggle Right Sidebar") {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        appState.showRightSidebar.toggle()
+                    }
+                }
+                .keyboardShortcut("]", modifiers: .command)
+            }
+        }
     }
 }

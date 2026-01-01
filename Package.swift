@@ -26,15 +26,13 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts"),
             ],
-            path: "Sources/Scribe"
+            path: "Sources/Scribe",
+            resources: [.process("Resources")]
         ),
-        // Test target temporarily disabled - uses Swift Testing framework
-        // which requires Xcode 16+ and causes dyld crash on launch
-        // TODO: Re-enable when migrating to XCTest or Xcode 16+
-        // .testTarget(
-        //     name: "ScribeTests",
-        //     dependencies: ["Scribe"],
-        //     path: "Tests/ScribeTests"
-        // ),
+        .testTarget(
+            name: "ScribeTests",
+            dependencies: ["Scribe"],
+            path: "Tests/ScribeTests"
+        ),
     ]
 )

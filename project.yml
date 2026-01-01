@@ -1,0 +1,75 @@
+name: Scribe
+options:
+  bundleIdPrefix: com.scribe
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift.git
+    from: "6.24.0"
+  swift-markdown:
+    url: https://github.com/apple/swift-markdown.git
+    branch: main
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts.git
+    from: "1.16.0"
+
+targets:
+  Scribe:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/Scribe
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.scribe.app
+        INFOPLIST_FILE: Scribe/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Scribe/Scribe.entitlements
+        PRODUCT_NAME: Scribe
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES
+        LD_RUNPATH_SEARCH_PATHS:
+          - "@executable_path/../Frameworks"
+    dependencies:
+      - package: GRDB
+        product: GRDB
+      - package: swift-markdown
+        product: Markdown
+      - package: KeyboardShortcuts
+        product: KeyboardShortcuts
+    info:
+      path: Scribe/Info.plist
+      properties:
+        CFBundleName: Scribe
+        CFBundleDisplayName: Scribe
+        CFBundleIdentifier: com.scribe.app
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "0.1.0"
+        CFBundlePackageType: APPL
+        CFBundleExecutable: Scribe
+        CFBundleIconFile: AppIcon
+        LSMinimumSystemVersion: "14.0"
+        LSApplicationCategoryType: public.app-category.productivity
+        NSHighResolutionCapable: true
+        NSSupportsAutomaticTermination: true
+        NSSupportsSuddenTermination: false
+        NSPrincipalClass: NSApplication
+    entitlements:
+      path: Scribe/Scribe.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.files.user-selected.read-write: true

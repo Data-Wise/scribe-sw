@@ -1,0 +1,477 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1409352B6CA04ECAA736C9C2 /* ErrorDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF2E8A481C115D020FFBB4B /* ErrorDialog.swift */; };
+		361722400DDBE18E76C4054F /* NoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7F2D2C432FBA719CB83F9B /* NoteService.swift */; };
+		3BAFA78C1D831B6161353E70 /* ScribeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2783FD977CEE5291A577E488 /* ScribeError.swift */; };
+		8AD1B93CBDFFC7ACDD974765 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58D5C574910F0DD9220C65C /* Note.swift */; };
+		AA2A6A41A088DA025BDF4822 /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76AEF6A8CCEDC92188D5C94 /* StatsFooter.swift */; };
+		B223389DD6B7D6F3AF1292C6 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 17031F400C4179EDDAE69D9A /* GRDB */; };
+		B836F34B35861AD79BAB04E3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A07A25E61311C46A8450502 /* AppState.swift */; };
+		C4457AFB46EBCC8F7A30D469 /* ScribeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572ACD849DC28AE0C35FCA9B /* ScribeApp.swift */; };
+		C4C7AA9C6AA0BA6C5411625E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608540E452B1AD56AD2328B /* MainView.swift */; };
+		CCF41CDCD674D52751BDB7DB /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C725549AC45BF7D905197E /* EditorView.swift */; };
+		D525FD11478DEFC8DD68072D /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5CA26955BE56993A35B5ED /* DatabaseManager.swift */; };
+		DA605DAD9A953CF9B8752FD4 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E81DB1B8ED68AF10077ECA /* DesignSystem.swift */; };
+		E13965E2010C02FDA06FDDF1 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A932A390DF9910454C957 /* Project.swift */; };
+		EAE5D4E4120F7F855B7ADB6D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 081942C84D29A251636BE8C7 /* Markdown */; };
+		EB0FA60A0BD3F50F9FACC252 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 2BBCEC781472965572C3D80F /* KeyboardShortcuts */; };
+		EB3A49BC70CBD82FFA1A573B /* WritingStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E2F5E6212BD9F2297D6B1 /* WritingStats.swift */; };
+		F95B45426EF38BC9F93CA068 /* ProjectService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0864802702EA5E5BCB73B433 /* ProjectService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		012E2F5E6212BD9F2297D6B1 /* WritingStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingStats.swift; sourceTree = "<group>"; };
+		0864802702EA5E5BCB73B433 /* ProjectService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectService.swift; sourceTree = "<group>"; };
+		11345C81116DC36BA7419B25 /* Scribe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2783FD977CEE5291A577E488 /* ScribeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribeError.swift; sourceTree = "<group>"; };
+		2A07A25E61311C46A8450502 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		3A5CA26955BE56993A35B5ED /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		3DF2E8A481C115D020FFBB4B /* ErrorDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDialog.swift; sourceTree = "<group>"; };
+		4608540E452B1AD56AD2328B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		572ACD849DC28AE0C35FCA9B /* ScribeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribeApp.swift; sourceTree = "<group>"; };
+		5F7F2D2C432FBA719CB83F9B /* NoteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteService.swift; sourceTree = "<group>"; };
+		63E81DB1B8ED68AF10077ECA /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		B76AEF6A8CCEDC92188D5C94 /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
+		D10A932A390DF9910454C957 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		D4C725549AC45BF7D905197E /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
+		F58D5C574910F0DD9220C65C /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		32C8E4CDC3056D38CC51E678 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B223389DD6B7D6F3AF1292C6 /* GRDB in Frameworks */,
+				EAE5D4E4120F7F855B7ADB6D /* Markdown in Frameworks */,
+				EB0FA60A0BD3F50F9FACC252 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0DA777E80F17C088FB912806 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				433EB63616170CC6C0E01D9A /* Services */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		24D022CCD48D8402A8B74188 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		433EB63616170CC6C0E01D9A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				5F7F2D2C432FBA719CB83F9B /* NoteService.swift */,
+				0864802702EA5E5BCB73B433 /* ProjectService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		4DC48F4E1D8716CEA0DF3C62 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				3A5CA26955BE56993A35B5ED /* DatabaseManager.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		57EC45E2582B2C9619E94593 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F58D5C574910F0DD9220C65C /* Note.swift */,
+				D10A932A390DF9910454C957 /* Project.swift */,
+				2783FD977CEE5291A577E488 /* ScribeError.swift */,
+				012E2F5E6212BD9F2297D6B1 /* WritingStats.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		637CC253C48F5DA69FAD3A59 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				11345C81116DC36BA7419B25 /* Scribe.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		74EB70383A3C76E5E4192999 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AF4F7C3AA3C98DD4C437358B /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				2A07A25E61311C46A8450502 /* AppState.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		CE0A276A257FD1674B6227E6 /* Scribe */ = {
+			isa = PBXGroup;
+			children = (
+				4DC48F4E1D8716CEA0DF3C62 /* Data */,
+				0DA777E80F17C088FB912806 /* Domain */,
+				57EC45E2582B2C9619E94593 /* Models */,
+				74EB70383A3C76E5E4192999 /* Resources */,
+				AF4F7C3AA3C98DD4C437358B /* Store */,
+				F1E7A7E4786B5224761E5D1E /* Views */,
+				572ACD849DC28AE0C35FCA9B /* ScribeApp.swift */,
+			);
+			name = Scribe;
+			path = Sources/Scribe;
+			sourceTree = "<group>";
+		};
+		CF1A6569B97AB964E08BAAEC = {
+			isa = PBXGroup;
+			children = (
+				CE0A276A257FD1674B6227E6 /* Scribe */,
+				637CC253C48F5DA69FAD3A59 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F1E7A7E4786B5224761E5D1E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				24D022CCD48D8402A8B74188 /* Components */,
+				63E81DB1B8ED68AF10077ECA /* DesignSystem.swift */,
+				D4C725549AC45BF7D905197E /* EditorView.swift */,
+				3DF2E8A481C115D020FFBB4B /* ErrorDialog.swift */,
+				4608540E452B1AD56AD2328B /* MainView.swift */,
+				B76AEF6A8CCEDC92188D5C94 /* StatsFooter.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		33F14FC823B69894B58E6BB8 /* Scribe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7AEB079BA819AB8DAB7D284C /* Build configuration list for PBXNativeTarget "Scribe" */;
+			buildPhases = (
+				A3C55BD5E9BF3DB4B77D78FC /* Sources */,
+				32C8E4CDC3056D38CC51E678 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Scribe;
+			packageProductDependencies = (
+				17031F400C4179EDDAE69D9A /* GRDB */,
+				081942C84D29A251636BE8C7 /* Markdown */,
+				2BBCEC781472965572C3D80F /* KeyboardShortcuts */,
+			);
+			productName = Scribe;
+			productReference = 11345C81116DC36BA7419B25 /* Scribe.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0911AD40AB20891FC5ABBE8B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					33F14FC823B69894B58E6BB8 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9E4712121E5F29BBE87574A2 /* Build configuration list for PBXProject "Scribe" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CF1A6569B97AB964E08BAAEC;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C70290CE49367DF540296226 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				122AB55974243931DF1B8270 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				2B1527F73BA91FF375ADF780 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				33F14FC823B69894B58E6BB8 /* Scribe */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A3C55BD5E9BF3DB4B77D78FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B836F34B35861AD79BAB04E3 /* AppState.swift in Sources */,
+				D525FD11478DEFC8DD68072D /* DatabaseManager.swift in Sources */,
+				DA605DAD9A953CF9B8752FD4 /* DesignSystem.swift in Sources */,
+				CCF41CDCD674D52751BDB7DB /* EditorView.swift in Sources */,
+				1409352B6CA04ECAA736C9C2 /* ErrorDialog.swift in Sources */,
+				C4C7AA9C6AA0BA6C5411625E /* MainView.swift in Sources */,
+				8AD1B93CBDFFC7ACDD974765 /* Note.swift in Sources */,
+				361722400DDBE18E76C4054F /* NoteService.swift in Sources */,
+				E13965E2010C02FDA06FDDF1 /* Project.swift in Sources */,
+				F95B45426EF38BC9F93CA068 /* ProjectService.swift in Sources */,
+				C4457AFB46EBCC8F7A30D469 /* ScribeApp.swift in Sources */,
+				3BAFA78C1D831B6161353E70 /* ScribeError.swift in Sources */,
+				AA2A6A41A088DA025BDF4822 /* StatsFooter.swift in Sources */,
+				EB3A49BC70CBD82FFA1A573B /* WritingStats.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		744AF67DB3094D104DF4907F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Scribe/Scribe.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Scribe/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.scribe.app;
+				PRODUCT_NAME = Scribe;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9F8A1B8A75D17DD51FD97E84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		A7734ADE561C375D5F93F7CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		DCABE6504E02D2E1270AA4AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Scribe/Scribe.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Scribe/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.scribe.app;
+				PRODUCT_NAME = Scribe;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7AEB079BA819AB8DAB7D284C /* Build configuration list for PBXNativeTarget "Scribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				744AF67DB3094D104DF4907F /* Debug */,
+				DCABE6504E02D2E1270AA4AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9E4712121E5F29BBE87574A2 /* Build configuration list for PBXProject "Scribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F8A1B8A75D17DD51FD97E84 /* Debug */,
+				A7734ADE561C375D5F93F7CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		122AB55974243931DF1B8270 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.16.0;
+			};
+		};
+		2B1527F73BA91FF375ADF780 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-markdown.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		C70290CE49367DF540296226 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.24.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		081942C84D29A251636BE8C7 /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B1527F73BA91FF375ADF780 /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
+		};
+		17031F400C4179EDDAE69D9A /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C70290CE49367DF540296226 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		2BBCEC781472965572C3D80F /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 122AB55974243931DF1B8270 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 0911AD40AB20891FC5ABBE8B /* Project object */;
+}

@@ -47,7 +47,8 @@ extension Note: FetchableRecord, PersistableRecord {
     static let databaseTableName = "notes"
     
     enum CodingKeys: String, CodingKey {
-        case id, title, content, wordCount
+        case id, title, content
+        case wordCount = "word_count"
         case projectId = "project_id"
         case createdAt = "created_at"
         case updatedAt = "updated_at"

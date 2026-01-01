@@ -1,10 +1,10 @@
 project: scribe-sw
 status: active
 priority: P1
-progress: 45
+progress: 70
 version: 0.1.0-dev
 updated: 2026-01-01
-next: Phase 1 - Enhanced Focus Mode (Week 1) → Stats foundation + editor enhancements
+next: Test keyboard responsiveness in Xcode GUI → then add keyboard shortcuts (⌘N, ⌘B)
 
 ## Current Focus: Frontend Rebuild (Phases 1-2)
 
@@ -13,12 +13,13 @@ next: Phase 1 - Enhanced Focus Mode (Week 1) → Stats foundation + editor enhan
 **Approach:** Keep backend untouched, rebuild/enhance frontend
 
 **Phase 1 (Week 1):**
-- [ ] Stats foundation (WritingStats model)
-- [ ] Enhanced stats footer (5 metrics: word, timer, streak, today, goal)
+- [x] Stats foundation (WritingStats model)
+- [x] Enhanced stats footer (5 metrics: word, timer, streak, today, goal)
+- [x] Focus Mode layout (EditorView + StatsFooter)
 - [ ] Editor enhancements (markdown awareness)
 - [ ] Remove toolbar chrome (pure Focus Mode)
 - [ ] Keyboard shortcuts (⌘B, ⌘N, ⌘W)
-- [ ] Session persistence (UserDefaults)
+- [x] Session persistence (UserDefaults)
 
 **Phase 2 (Week 2):**
 - [ ] Sidebar structure (SidebarView, ProjectSection, RecentSection)
@@ -51,7 +52,44 @@ next: Phase 1 - Enhanced Focus Mode (Week 1) → Stats foundation + editor enhan
 
 ## Recent Sessions
 
-### Jan 1, 2026 - Complete Rebuild Planning
+### Jan 1, 2026 (Session 3) - Xcode Project & Bug Fixes
+- Created proper Xcode project (eliminates bundle identifier warnings)
+  - Installed xcodegen via Homebrew
+  - Created project.yml (XcodeGen specification)
+  - Created Scribe/Info.plist and Scribe.entitlements
+  - Generated Scribe.xcodeproj with `xcodegen`
+- Fixed critical bugs:
+  - CodingKey bug: Note.swift wordCount → "word_count" mapping
+  - Migration bug: Added v3 migration for project columns (color, icon, settings)
+  - Database crash: Removed old database with conflicting migration names
+- Deep cleaned project:
+  - Archived old CLI files (cli/ → archive/cli-tauri-version/)
+  - Removed outdated docs (CURRENT_STATUS.md, FRESH_START_SUMMARY.md, etc.)
+  - Removed empty directories (Dependencies/, Resources/)
+- Build: ✅ Clean (0 warnings, 0 errors, proper .app bundle)
+
+### Jan 1, 2026 (Session 2) - Phase 1 Stats Foundation
+- Created WritingStats.swift model (160 lines)
+  - Session tracking (timer, word count)
+  - Daily tracking (today's words, goal progress)
+  - Streak calculation (consecutive writing days)
+  - UserDefaults persistence
+- Integrated WritingStats into AppState
+  - 1-second timer for live session duration updates
+  - Auto-save word count tracking
+- Created StatsFooter.swift (5 ADHD-friendly metrics)
+  - Word count, timer, streak, today's words, goal progress
+  - Visual progress bar for daily goal
+- Created EditorView.swift (distraction-free editor)
+  - Title + content TextEditor
+  - 1-second debounced auto-save
+  - Live word count updates
+- Updated MainView.swift (Focus Mode layout)
+  - Editor + StatsFooter composition
+  - Creates new note on launch if empty
+- Build: ✅ Clean (0 warnings, 0 errors)
+
+### Jan 1, 2026 (Session 1) - Complete Rebuild Planning
 - Audited current codebase (12 files, 1562 lines)
 - Created comprehensive rebuild plan (REBUILD_PLAN_2026.md)
 - Cleaned up 6 outdated planning docs
@@ -71,7 +109,8 @@ next: Phase 1 - Enhanced Focus Mode (Week 1) → Stats foundation + editor enhan
 | ROADMAP.md | Phased timeline |
 | CLAUDE.md | AI assistant guidance |
 | TODO.md | Task tracking |
-| CURRENT_STATUS.md | Current state summary |
+| project.yml | XcodeGen configuration |
+| Scribe.xcodeproj | Xcode project (generated) |
 
 ## Links
 

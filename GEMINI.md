@@ -1,79 +1,175 @@
 # GEMINI.md
 
-> **AI Assistant Knowledge Base for Scribe Swift (Scribe-SW)**
+> **AI Assistant Knowledge Base for Scribe Swift**
 
 ---
 
 ## 🎯 Project Identity
 
-**Scribe Swift** is the "Native Plus" evolution of the Scribe project. It is a premium, distraction-free writing environment for macOS, built from the ground up with **SwiftUI** and the **Lexical JS engine**.
+**Scribe Swift** is a pure-native ADHD-friendly distraction-free writing app for macOS, built with **SwiftUI** and **GRDB**.
 
-- **Goal**: Zero-friction, high-performance writing for researchers (specifically Statistics/Causal Inference).
-- **Philisophy**: ADHD-friendly design that minimizes mental load.
+- **Goal**: Zero-friction writing for researchers and ADHD users
+- **Philosophy**: Minimal cognitive load, maximal focus
+- **Version**: 0.1.0-dev (Active Rebuild)
+- **Platform**: macOS 14+ (Sonoma)
 
 ---
 
 ## 🧠 ADHD Design Principles
 
-1. **Zero Friction**: < 2s startup, active note auto-saves, instant typing.
-2. **One Thing at a Time**: Focus on a single note. Sidebars and headers are collapsible.
-3. **Native Focus Mode (⌘⇧F)**: Instantly strips the UI to just the text with serif typography.
-4. **Visible Progress**: Real-time word counts and status indicators.
-5. **Quick Capture (⌘⇧C)**: Fast entry point for ideas without breaking flow.
+1. **Zero Friction**: < 3 seconds to start writing
+2. **One Thing at a Time**: Single note, Focus Mode default
+3. **Escape Hatches**: ⌘W closes without prompt (auto-save)
+4. **Visible Progress**: Stats footer with 5 metrics
+5. **Sensory-Friendly**: Dark mode default, soft colors
 
 ---
 
-## 🚀 Key Achievements (December 2025)
+## 🏗️ Architecture
 
-### 1. CodeMirror 5 Hybrid Engine
-
-- **Mode**: Unified Edit/Split (⌘1/⌘2).
-- **Tech**: CodeMirror 5 running in a secure `WKWebView` with native Swift sync.
-- **Goal**: Perfect visual alignment with the native Markdown preview.
-
-### 2. Academic Citations (@cite)
-
-- **Indexing**: Automatically watches `~/Documents/Scribe/global.bib`.
-- **Trigger**: Type `@` to initiate fuzzy search for BibTeX keys.
-- **Service**: 100% thread-safe `BibTeXService`.
-
-### 3. Native Focus Mode
-
-- **Shortcut**: `⌘⇧F`.
-- **Experience**: Hides all sidebars and chrome with spring animations.
-
-### 4. Verification & Quality
-
-- **UI Tests**: XCUITest suite covering navigation, mode switching, and sidebar toggling.
-- **Memory**: Optimized Swift 6 `@Observable` models.
+```
+┌─────────────────────────────────────────────────────────┐
+│                      SwiftUI Views                       │
+│  MainView → EditorView + StatsFooter                    │
+├─────────────────────────────────────────────────────────┤
+│                    AppState (@MainActor)                 │
+│  @Published: notes, projects, selectedNoteId, stats     │
+├─────────────────────────────────────────────────────────┤
+│                      Services Layer                      │
+│  NoteService, ProjectService (async/await CRUD)         │
+├─────────────────────────────────────────────────────────┤
+│                   DatabaseManager (Actor)                │
+│  GRDB wrapper, thread-safe, SQLite + FTS5               │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 📐 Technical Architecture (Locked)
+## 📁 Source Structure
+
+```
+Sources/Scribe/
+├── ScribeApp.swift           # @main entry point
+├── Data/
+│   └── DatabaseManager.swift # Actor-based GRDB (245 lines)
+├── Domain/Services/
+│   ├── NoteService.swift     # Note CRUD (107 lines)
+│   └── ProjectService.swift  # Project CRUD (56 lines)
+├── Models/
+│   ├── Note.swift            # Note model + GRDB (70 lines)
+│   ├── Project.swift         # Project + ProjectType (231 lines)
+│   ├── ScribeError.swift     # Error types
+│   └── WritingStats.swift    # Session/streak tracking (209 lines)
+├── Store/
+│   └── AppState.swift        # UI state management (197 lines)
+└── Views/
+    ├── DesignSystem.swift    # Colors, fonts, spacing (92 lines)
+    ├── MainView.swift        # Root layout (51 lines)
+    ├── EditorView.swift      # Markdown editor (119 lines)
+    └── StatsFooter.swift     # 5-metric footer (147 lines)
+```
+
+**Total**: ~12 files, ~1,500 lines
+
+---
+
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|------------|
 | **UI** | SwiftUI (macOS 14+) |
-| **Logic** | Swift 6 / AppState (@Observable) |
-| **Engine** | CodeMirror 5 (via WKWebView) |
-| **Database** | SQLite via GRDB.swift |
+| **Database** | GRDB 6.24+ (SQLite + FTS5) |
 | **Markdown** | swift-markdown |
+| **Shortcuts** | KeyboardShortcuts |
+| **Concurrency** | async/await, Actors, Sendable |
 
 ---
 
-## 📁 Key Documentation
+## 🎨 Design System
 
-- [ARCHITECTURE.md](file:///Users/dt/projects/dev-tools/scribe-sw/docs/development/ARCHITECTURE.md)
-- [KNOWLEDGE.md](file:///Users/dt/projects/dev-tools/scribe-sw/.claude/KNOWLEDGE.md)
-- [walkthrough.md](file:///Users/dt/.gemini/antigravity/brain/bd33520a-e8a5-4c26-971e-c35a262ed3f3/walkthrough.md)
+**Colors** (VSCode Dark):
+
+- `background`: #1e1e1e
+- `surface`: #252526
+- `textPrimary`: #d4d4d4
+- `accent`: #007acc
+- `streak`: #ff6b35
+
+**Typography**:
+
+- Editor: SF Mono 16pt
+- Title: System 24pt bold
+- Stats: Rounded 12pt medium
 
 ---
 
-## 🛠️ Build & Run
+## 📊 Current Status
+
+**Backend**: 100% complete ✅
+
+- DatabaseManager (Actor, GRDB, FTS5)
+- NoteService, ProjectService
+- Models with GRDB conformance
+
+**Frontend**: 40% complete 🚧
+
+- DesignSystem ✅
+- Focus Mode layout ✅
+- WritingStats + StatsFooter ✅
+- Keyboard shortcuts ❌
+- Sidebar (Phase 2) ❌
+
+---
+
+## 🗓️ Roadmap
+
+| Phase | Focus | Status |
+|-------|-------|--------|
+| 1 | Focus Mode + Stats | In Progress |
+| 2 | Sidebar + Navigation | Planned |
+| 3 | Markdown Preview | Deferred |
+| 4 | LaTeX Rendering | Deferred |
+
+---
+
+## 🔧 Quick Commands
 
 ```bash
+# Build
 swift build
-swift run
+
+# Run (Xcode GUI)
+open Package.swift -a Xcode  # then ⌘R
+
+# Clean
+swift package clean
+
+# Database location
+~/Library/Application Support/Scribe/scribe.sqlite
 ```
 
-*Updated: 2025-12-31*
+---
+
+## ⚠️ Key Constraints
+
+1. **Keep backend untouched** - Data layer is solid
+2. **@MainActor for UI** - All view code on main thread
+3. **Services only** - Never access DatabaseManager directly
+4. **Tests disabled** - Swift Testing incompatible, needs XCTest migration
+
+---
+
+## 📚 Key Docs
+
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Full dev guide (700 lines) |
+| `.STATUS` | Project metadata |
+| `TODO.md` | Task checklist |
+| `ROADMAP.md` | Timeline |
+| `docs/PRODUCT_REQUIREMENTS.md` | Vision |
+| `docs/development/REBUILD_PLAN_2026.md` | Implementation plan |
+
+---
+
+*Updated: 2026-01-01*
