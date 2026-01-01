@@ -41,6 +41,13 @@ struct ScribeApp: App {
                 }
                 .keyboardShortcut("[", modifiers: .command)
             }
+            
+            CommandGroup(after: .sidebar) {
+                Button("Search Notes") {
+                    appState.showCommandPalette = true
+                }
+                .keyboardShortcut("k", modifiers: .command)
+            }
         }
 
         // Menu bar extra for quick access

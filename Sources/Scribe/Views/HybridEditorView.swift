@@ -13,6 +13,12 @@ struct HybridEditorView: View {
     @State private var splitRatio: CGFloat = 0.5
     @FocusState private var isEditorFocused: Bool
     
+    // Autocomplete State
+    @State private var showTagAutocomplete = false
+    @State private var tagQuery = ""
+    @State private var showWikiLinkAutocomplete = false
+    @State private var wikiLinkQuery = ""
+    
     init(note: Note) {
         self.note = note
         _content = State(initialValue: note.content)
@@ -29,19 +35,36 @@ struct HybridEditorView: View {
                 Divider()
                 
                 // Editor content
-                GeometryReader { geometry in
-                    if showPreview {
-                        // Split view: Source + Preview
-                        HSplitView {
-                            SourceEditor(content: $content, isEditorFocused: $isEditorFocused)
-                                .frame(minWidth: 300)
-                            
-                            MarkdownPreview(content: content)
-                                .frame(minWidth: 300)
+                ZStack(alignment: .topLeading) {
+                    GeometryReader { geometry in
+                        if showPreview {
+                            // Split view: Source + Preview
+                            HSplitView {
+                                SourceEditorView(content: $content, isEditorFocused: $isEditorFocused)
+                                    .frame(minWidth: 300)
+                                
+                                MarkdownPreview(content: content)
+                                    .frame(minWidth: 300)
+                            }
+                        } else {
+                            // Source only
+                            SourceEditorView(content: $content, isEditorFocused: $isEditorFocused)
                         }
-                    } else {
-                        // Source only
-                        SourceEditor(content: $content, isEditorFocused: $isEditorFocused)
+                    }
+                    
+                    // Autocomplete overlays
+                    if showTagAutocomplete {
+                        TagAutocompleteView(tags: filteredTags) { tag in
+                            insertTag(tag)
+                        }
+                        .offset(x: 20, y: 50) // Simplified positioning
+                    }
+                    
+                    if showWikiLinkAutocomplete {
+                        WikiLinkAutocomplete(suggestions: filteredSuggestions) { suggestion in
+                            insertWikiLink(suggestion.title)
+                        }
+                        .offset(x: 20, y: 50)
                     }
                 }
                 
@@ -96,6 +119,7 @@ struct HybridEditorView: View {
             }
         }
         .onChange(of: content) { _, newValue in
+            detectTriggers(in: newValue)
             saveNote()
         }
         .onChange(of: title) { _, newValue in
@@ -110,6 +134,29 @@ struct HybridEditorView: View {
         content.split(separator: " ").count
     }
     
+    private func detectTriggers(in text: String) {
+        // Detect #tag
+        if let lastWord = text.components(separatedBy: .whitespacesAndNewlines).last, lastWord.hasPrefix("#") {
+            showTagAutocomplete = true
+            tagQuery = String(lastWord.dropFirst())
+        } else {
+            showTagAutocomplete = false
+        }
+        
+        // Detect [[wiki link
+        if let lastBracket = text.range(of: "[[", options: .backwards) {
+            let afterBracket = text[lastBracket.upperBound...]
+            if !afterBracket.contains("]]") && !afterBracket.contains("\n") {
+                showWikiLinkAutocomplete = true
+                wikiLinkQuery = String(afterBracket)
+            } else {
+                showWikiLinkAutocomplete = false
+            }
+        } else {
+            showWikiLinkAutocomplete = false
+        }
+    }
+    
     private func saveNote() {
         var updatedNote = note
         updatedNote.title = title
@@ -120,9 +167,46 @@ struct HybridEditorView: View {
     private func insertMarkdown(_ prefix: String, _ suffix: String) {
         content += prefix + suffix
     }
+    
+    // Autocomplete Logic
+    
+    private var filteredTags: [String] {
+        appState.uniqueTags.filter { $0.lowercased().contains(tagQuery.lowercased()) || tagQuery.isEmpty }
+    }
+    
+    private var filteredSuggestions: [WikiLinkSuggestion] {
+        appState.notes.filter { 
+            $0.title.lowercased().contains(wikiLinkQuery.lowercased()) || wikiLinkQuery.isEmpty 
+        }.map(WikiLinkSuggestion.init)
+    }
+    
+    private func insertTag(_ tag: String) {
+        // Simple append for now, ideally replaces the #query
+        content += tag.hasPrefix("#") ? tag.dropFirst() : tag
+        showTagAutocomplete = false
+    }
+    
+    private func insertWikiLink(_ title: String) {
+        content += title + "]]"
+        showWikiLinkAutocomplete = false
+    }
 }
 
-// MARK: - Title Bar
+// MARK: - Source Editor View (Renamed for consistency)
+
+private struct SourceEditorView: View {
+    @Binding var content: String
+    var isEditorFocused: FocusState<Bool>.Binding
+    
+    var body: some View {
+        TextEditor(text: $content)
+            .font(.system(size: 15, design: .monospaced))
+            .scrollContentBackground(.hidden)
+            .padding(20)
+            .focused(isEditorFocused)
+            .background(Color(.textBackgroundColor))
+    }
+}
 
 private struct TitleBar: View {
     @Binding var title: String

@@ -55,6 +55,20 @@ struct ContentView: View {
                 Text(error.localizedDescription)
             }
         }
+        .overlay {
+            if appState.showCommandPalette {
+                ZStack {
+                    Color.black.opacity(0.1)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            appState.showCommandPalette = false
+                        }
+                    
+                    CommandPaletteView()
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+            }
+        }
     }
 }
 

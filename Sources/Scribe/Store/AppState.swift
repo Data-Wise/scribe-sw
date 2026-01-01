@@ -21,6 +21,11 @@ final class AppState: ObservableObject {
     @Published var writingStats = WritingStats()
     @Published var isLoading = false
     @Published var error: ScribeError?
+    
+    // MARK: - Search State
+    @Published var showCommandPalette = false
+    @Published var searchQuery = ""
+    @Published var searchResults: [Note] = []
 
     // MARK: - Services
     
@@ -222,12 +227,18 @@ final class AppState: ObservableObject {
     
     // MARK: - Search
     
-    func searchNotes(query: String) async -> [Note] {
+    func searchNotes(query: String) async {
+        self.searchQuery = query
+        guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
+            self.searchResults = []
+            return
+        }
+        
         do {
-            return try await noteService.search(query: query, projectId: selectedProjectId)
+            self.searchResults = try await noteService.search(query: query, projectId: selectedProjectId)
         } catch {
             self.error = error as? ScribeError ?? .unknown(error)
-            return []
+            self.searchResults = []
         }
     }
     
@@ -246,6 +257,11 @@ final class AppState: ObservableObject {
             self.error = error as? ScribeError ?? .unknown(error)
             throw error
         }
+    }
+
+    var uniqueTags: [String] {
+        let allTags = notes.flatMap { $0.tags }
+        return Array(Set(allTags)).sorted()
     }
 }
 
