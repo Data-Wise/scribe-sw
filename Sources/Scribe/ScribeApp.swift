@@ -63,12 +63,12 @@ struct ScribeApp: App {
             }
         }
 
-        // Menu bar extra for quick access
-        MenuBarExtra("Scribe", systemImage: "doc.text") {
-            MenuBarView()
-                .environmentObject(appState)
-        }
-        .menuBarExtraStyle(.window)
+        // // Menu bar extra for quick access
+        // MenuBarExtra("Scribe", systemImage: "doc.text") {
+        //     MenuBarView()
+        //         .environmentObject(appState)
+        // }
+        // .menuBarExtraStyle(.window)
 
         // Quick capture window
         Window("Quick Capture", id: "quick-capture") {
