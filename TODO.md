@@ -38,66 +38,33 @@ Tasks and next steps for the Scribe SwiftUI project.
 
 ## Immediate (This Week)
 
-### Phase 2.5: Sidebar Polish (Days 8-10)
+### Phase 2.5: UI Polish (Days 8-10)
 
-- [ ] Right-click context menus
-  - [ ] Note context menu (Rename, Move, Delete)
-  - [ ] Project context menu (New Note, Rename, Delete)
-  - [ ] Sidebar background menu (New Note, New Project)
-- [ ] Drag-and-drop
-  - [ ] Drag note to project (move)
-  - [ ] Drag note to reorder
-  - [ ] Visual feedback (ghost, highlights)
-- [ ] Inline editing
-  - [ ] Double-click empty space → create note
-  - [ ] Rename note in place
-- [ ] Additional keyboard shortcuts
-  - [ ] ⌘R (rename), ⌘⌫ (delete), ⌘D (duplicate)
-  - [ ] ↑/↓ (navigate), ⌘↑/↓ (reorder)
-- [ ] Visual polish
-  - [ ] Hover states, selection highlighting
-  - [ ] 150ms animations
-  - [ ] Loading skeletons
-
-### Day 3-4: Enhanced Editor
-
-- [ ] Add markdown awareness to EditorView
-  - [ ] Detect **bold**, *italic* as you type
-  - [ ] Detect [[wiki links]]
-  - [ ] Detect #tags
-  - [ ] Visual indicators (no full rendering)
-- [ ] Improve auto-save implementation
-  - [ ] 1 second debounce (cancel previous tasks)
-  - [ ] Visual indicator when saving
-  - [ ] Update word count on every change
-- [ ] Remove toolbar from MainView
-  - [ ] Delete .toolbar {} block
-  - [ ] Keyboard-only sidebar toggle
-- [ ] Add keyboard shortcut handlers
-  - [ ] ⌘B → Toggle sidebar with animation
-  - [ ] ⌘N → Create new note
-  - [ ] ⌘W → Close window (no save prompt)
-
-### Day 5-7: Polish & Testing
-
-- [ ] Add .commands {} menu items
-- [ ] Test session persistence (UserDefaults)
-- [ ] Test streak calculation (write 2 days, skip 1 day)
-- [ ] Test auto-save (type, wait 1s, verify saved)
-- [ ] Test keyboard shortcuts (all work smoothly)
-- [ ] Verify stats update in real-time
-- [ ] Performance check (no UI jank)
+- [ ] Left Sidebar enhancements (menus, drag-drop, inline edit)
+- [ ] **Editor Area Polish**
+  - [ ] Implement Tab Bar with gradient accent
+  - [ ] Add Pinned Mission Control tab (⌘1)
+  - [ ] Add Breadcrumbs (Project > Title)
+  - [ ] Implement basic markdown syntax highlighting
+  - [ ] Move session timer to top bar/header
+- [ ] Additional keyboard shortcuts (⌘R, ⌘⌫, ⌘D, ⌘1-9)
+- [ ] Visual polish (Inter font, animations, skeletons)
 
 ---
 
-## Next Week (Phase 2)
+## Future Phases
 
-### Day 8-9: Sidebar Structure
+### Phase 3: Markdown Preview
 
-- [ ] Create `Sources/Scribe/Views/Components/Sidebar/SidebarView.swift`
-- [ ] Create `Sources/Scribe/Views/Components/Sidebar/ProjectSection.swift`
-- [ ] Create `Sources/Scribe/Views/Components/Sidebar/RecentSection.swift`
-- [ ] Add search field to sidebar
+- [ ] Create PreviewPane component (WebView)
+- [ ] Integrate swift-markdown
+- [ ] Add ⌘P toggle for split view
+
+### Phase 4: LaTeX Rendering
+
+- [ ] Integrate MathJax in WebView
+- [ ] Detect `$` and `$$` syntax
+- [ ] Render math blocks
 - [ ] Wire up to MainView
 
 ### Day 10-11: Navigation Logic

@@ -87,11 +87,11 @@ Sidebar with project organization, note selection, seamless navigation
 
 ---
 
-## Phase 2.5: Sidebar Polish (Week 2 - Jan 8-10, 2026) 🚧
+## Phase 2.5: UI Polish (Week 2 - Jan 8-10, 2026) 🚧
 
 ### Goal
 
-Professional sidebar interactions: context menus, drag-drop, inline editing
+Professional interactions (context menus, drag-drop) and Editor enhancements (tabs, breadcrumbs)
 
 ### Timeline
 
@@ -102,35 +102,36 @@ Professional sidebar interactions: context menus, drag-drop, inline editing
 
 ### Tasks
 
-**Day 1: Context Menus**
+**Day 1: Context Menus & Sidebar**
 
-- [ ] Note context menu (Rename, Move to Project, Delete)
-- [ ] Project context menu (New Note, Rename, Delete)
-- [ ] Sidebar background menu (New Note, New Project)
+- [ ] Right-click context menus for Notes, Projects, and Background
+- [ ] Drag-and-drop handling for moving and reordering
+- [ ] Inline note creation and renaming
 - [ ] Wire menu actions to AppState
 
-**Day 2: Drag-and-Drop**
+**Day 2: Editor Tabs & Header**
 
-- [ ] Drag note to project (move operation)
-- [ ] Drag note to reorder
-- [ ] Visual feedback (ghost, highlights)
-- [ ] Drop target handling
+- [ ] Implement Gradient Tab Bar
+- [ ] Add Pinned Mission Control tab as home base
+- [ ] Add Breadcrumbs navigation bar
+- [ ] Move Session timer/stats to top-bar integration
+- [ ] Keyboard shortcuts for tab switching (⌘1-9)
 
-**Day 3: Polish**
+**Day 3: Markdown & Visual Polish**
 
-- [ ] Inline note creation (double-click empty space)
-- [ ] Rename in place
-- [ ] Additional keyboard shortcuts (⌘R, ⌘⌫, ⌘D)
-- [ ] Hover states, animations
-- [ ] Loading skeletons
+- [ ] Basic Markdown syntax highlighting (Bold, Italic, Links)
+- [ ] Visual design alignment (Inter/SF Pro, spacing)
+- [ ] Hover states, selection polish, and smooth 150ms animations
+- [ ] Loading skeletons for async operations
 
 ### Success Criteria
 
-- ✅ Right-click note shows context menu
-- ✅ Drag note to project moves it
-- ✅ Double-click creates note inline
-- ✅ All keyboard shortcuts work
-- ✅ Smooth animations throughout
+- ✅ Right-click note shows comprehensive context menu
+- ✅ Drag-and-drop moves notes between projects seamlessly
+- ✅ Editor features functional tabs with gradient accents
+- ✅ Breadcrumbs show current file location
+- ✅ Basic markdown characters are highlighted in editor
+- ✅ All new keyboard shortcuts (⌘R, ⌘⌫, ⌘D, ⌘1-9) work
 
 ### Metrics
 
