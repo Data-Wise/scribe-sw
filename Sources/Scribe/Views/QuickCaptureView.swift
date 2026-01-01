@@ -3,48 +3,44 @@ import SwiftUI
 /// Quick capture floating window for rapid note taking
 struct QuickCaptureView: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) private var dismiss
-    @State private var text = ""
-    @State private var selectedVaultId: UUID?
-    @FocusState private var isTextFocused: Bool
+    @State private var title = ""
+    @State private var content = ""
+    @State private var selectedProjectId: String?
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 16) {
             // Header
             HStack {
-                Image(systemName: "bolt.fill")
-                    .foregroundColor(.orange)
                 Text("Quick Capture")
                     .font(.headline)
                 Spacer()
-                Button(action: { dismiss() }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
+                Button("Cancel") {
+                    dismiss()
                 }
-                .buttonStyle(.plain)
+                .keyboardShortcut(.cancelAction)
             }
-            .padding()
-            .background(Color(.windowBackgroundColor))
 
             Divider()
 
-            // Text area
-            TextEditor(text: $text)
-                .font(.system(size: 14))
-                .scrollContentBackground(.hidden)
-                .padding(12)
-                .focused($isTextFocused)
+            // Title
+            TextField("Note title...", text: $title)
+                .textFieldStyle(.roundedBorder)
 
-            Divider()
+            // Content
+            TextEditor(text: $content)
+                .font(.body)
+                .frame(height: 200)
+                .border(Color.secondary.opacity(0.2))
 
-            // Footer
+            // Project picker
             HStack {
-                // Vault picker
-                Picker("Vault", selection: $selectedVaultId) {
-                    Text("Inbox").tag(nil as UUID?)
-                    ForEach(appState.vaults) { vault in
-                        Label(vault.name, systemImage: vault.type.icon)
-                            .tag(vault.id as UUID?)
+                Text("Project:")
+                Picker("Project", selection: $selectedProjectId) {
+                    Text("Inbox").tag(nil as String?)
+                    ForEach(appState.projects) { project in
+                        Label(project.name, systemImage: project.type.systemImage)
+                            .tag(project.id as String?)
                     }
                 }
                 .pickerStyle(.menu)
@@ -57,37 +53,18 @@ struct QuickCaptureView: View {
                     Label("Save", systemImage: "checkmark")
                 }
                 .keyboardShortcut(.return, modifiers: .command)
-                .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
-            .padding()
-            .background(Color(.windowBackgroundColor))
         }
-        .frame(width: 400, height: 250)
-        .onAppear {
-            isTextFocused = true
-        }
+        .padding()
+        .frame(width: 500)
     }
 
     private func saveCapture() {
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedText.isEmpty else { return }
-
-        // Extract title from first line
-        let lines = trimmedText.components(separatedBy: "\n")
-        let title = lines.first?.prefix(50).trimmingCharacters(in: .whitespaces) ?? "Quick Note"
-
-        let page = Page(
-            id: UUID(),
-            vaultId: selectedVaultId,
-            title: String(title),
-            content: trimmedText,
-            createdAt: Date(),
-            updatedAt: Date()
-        )
-
-        appState.pages.append(page)
-        text = ""
-        dismiss()
+        Task {
+            await appState.createNewNote()
+            dismiss()
+        }
     }
 }
 

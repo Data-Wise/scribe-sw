@@ -304,14 +304,3 @@ actor DatabaseManager {
         return notes.reduce(0) { $0 + $1.wordCount }
     }
 }
-
-// MARK: - Helper Extensions
-
-private extension DatabasePool {
-    func trace(_ tracer: @escaping (String) -> Void) {
-        var config = configuration
-        config.prepareDatabase { db in
-            db.trace(tracer)
-        }
-    }
-}

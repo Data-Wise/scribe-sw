@@ -41,10 +41,10 @@ final class NoteService {
         }
         
         let note = Note(
+            projectId: projectId,
             title: title,
             content: content,
             folder: folder,
-            projectId: projectId,
             metadata: metadata
         )
         

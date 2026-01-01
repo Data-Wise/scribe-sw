@@ -1,30 +1,30 @@
 import SwiftUI
 
-/// Markdown editor for a single page
-struct PageEditor: View {
-    let page: Page
+/// Markdown editor for a single note
+struct NoteEditorView: View {
+    let note: Note
     @EnvironmentObject var appState: AppState
     @State private var content: String
     @State private var isFocusMode = false
     @FocusState private var isEditorFocused: Bool
-
-    init(page: Page) {
-        self.page = page
-        _content = State(initialValue: page.content)
+    
+    init(note: Note) {
+        self.note = note
+        _content = State(initialValue: note.content)
     }
-
+    
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     // Title
-                    TextField("Untitled", text: .constant(page.title))
+                    TextField("Untitled", text: .constant(note.title))
                         .font(.system(size: 28, weight: .bold))
                         .textFieldStyle(.plain)
                         .padding(.horizontal, editorPadding(geometry))
                         .padding(.top, 40)
                         .padding(.bottom, 20)
-
+                    
                     // Editor
                     TextEditor(text: $content)
                         .font(.system(size: 16, design: .monospaced))
@@ -33,9 +33,9 @@ struct PageEditor: View {
                         .focused($isEditorFocused)
                         .frame(minHeight: geometry.size.height - 200)
                         .onChange(of: content) { _, newValue in
-                            var updatedPage = page
-                            updatedPage.content = newValue
-                            appState.savePage(updatedPage)
+                            var updatedNote = note
+                            updatedNote.content = newValue
+                            appState.saveNote(updatedNote)
                         }
                 }
             }
@@ -43,7 +43,7 @@ struct PageEditor: View {
         }
         .overlay(alignment: .bottom) {
             // Status bar
-            EditorStatusBar(page: page, content: content)
+            EditorStatusBar(note: note, content: content)
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
@@ -57,16 +57,16 @@ struct PageEditor: View {
             isEditorFocused = true
         }
     }
-
+    
     private func editorPadding(_ geometry: GeometryProxy) -> CGFloat {
         let idealWidth: CGFloat = 700
         let minPadding: CGFloat = 40
         let availableWidth = geometry.size.width
-
+        
         if availableWidth <= idealWidth + (minPadding * 2) {
             return minPadding
         }
-
+        
         return (availableWidth - idealWidth) / 2
     }
 }
@@ -74,24 +74,24 @@ struct PageEditor: View {
 // MARK: - Status Bar
 
 private struct EditorStatusBar: View {
-    let page: Page
+    let note: Note
     let content: String
-
+    
     var body: some View {
         HStack {
             // Word count
             Label("\(wordCount) words", systemImage: "textformat")
-
+            
             Divider()
                 .frame(height: 12)
-
+            
             // Character count
             Text("\(content.count) chars")
-
+            
             Spacer()
-
+            
             // Last updated
-            Text("Updated \(page.updatedAt.formatted(.relative(presentation: .named)))")
+            Text("Updated \(note.modifiedDate.formatted(.relative(presentation: .named)))")
         }
         .font(.caption)
         .foregroundColor(.secondary)
@@ -99,13 +99,13 @@ private struct EditorStatusBar: View {
         .padding(.vertical, 8)
         .background(.ultraThinMaterial)
     }
-
+    
     private var wordCount: Int {
         content.split(separator: " ").count
     }
 }
 
 #Preview {
-    PageEditor(page: Page(title: "Test Page", content: "Hello world"))
+    NoteEditorView(note: Note(title: "Test Note", content: "Hello world"))
         .environmentObject(AppState())
 }

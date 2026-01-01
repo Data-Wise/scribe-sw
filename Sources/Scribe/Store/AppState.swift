@@ -1,7 +1,7 @@
 import SwiftUI
 import Combine
 
-/// Central app state management (similar to Zustand store)
+/// Central app state management
 @MainActor
 final class AppState: ObservableObject {
     // MARK: - UI State
@@ -18,52 +18,76 @@ final class AppState: ObservableObject {
     // MARK: - Data
     @Published var projects: [Project] = []
     @Published var notes: [Note] = []
+    @Published var isLoading = false
+    @Published var error: ScribeError?
 
     // MARK: - Services
-    private let database: DatabaseService
-
-    init() {
-        self.database = DatabaseService()
-        loadData()
-    }
-
-    // MARK: - Actions
-
-    func createNewNote() {
-        let note = Note(
-            id: UUID().uuidString.lowercased(),
-            title: "Untitled",
-            content: "",
-            folder: "inbox",
-            projectId: selectedProjectId
-        )
-        notes.append(note)
-        openNote(note)
-    }
-
-    func openDailyNote() {
-        let today = Calendar.current.startOfDay(for: Date())
+    
+    private let noteService: NoteService
+    private let projectService: ProjectService
+    
+    init(
+        noteService: NoteService = .shared,
+        projectService: ProjectService = .shared
+    ) {
+        self.noteService = noteService
+        self.projectService = projectService
         
-        // Find existing daily note
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let title = formatter.string(from: today)
-        
-        if let existing = notes.first(where: { $0.title == title && $0.folder == "daily" }) {
-            openNote(existing)
-            return
+        Task {
+            await loadData()
         }
+    }
+
+    // MARK: - Data Loading
+    
+    func loadData() async {
+        isLoading = true
+        defer { isLoading = false }
         
-        // Create new daily note
-        let note = Note(
-            id: UUID().uuidString.lowercased(),
-            title: title,
-            content: "# \(title)\n\n",
-            folder: "daily",
-            projectId: selectedProjectId
-        )
-        notes.append(note)
-        openNote(note)
+        do {
+            async let projectsTask = projectService.fetchAll()
+            async let notesTask = noteService.fetchAll()
+            
+            projects = try await projectsTask
+            notes = try await notesTask
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+
+    // MARK: - Note Actions
+
+    func createNewNote() async {
+        do {
+            let note = try await noteService.create(
+                title: "Untitled",
+                content: "",
+                projectId: selectedProjectId,
+                folder: "inbox"
+            )
+            notes.append(note)
+            openNote(note)
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+
+    func openDailyNote() async {
+        do {
+            let note = try await noteService.createDailyNote(
+                for: Date(),
+                projectId: selectedProjectId
+            )
+            
+            // Update local state if not already present
+            if !notes.contains(where: { $0.id == note.id }) {
+                notes.append(note)
+            }
+            
+            openNote(note)
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
     }
 
     func openNote(_ note: Note) {
@@ -77,38 +101,85 @@ final class AppState: ObservableObject {
     }
 
     func closeTab(_ tabId: UUID) {
-        guard let index = openTabs.firstIndex(where: { $0.id == tabId }) else { return }
-        let tab = openTabs[index]
-
-        // Don't close pinned tabs
-        guard !tab.isPinned else { return }
+        guard let index = openTabs.firstIndex(where: { $0.id == tabId }) else {
+            return
+        }
 
         openTabs.remove(at: index)
 
         // Select adjacent tab if closing active
         if activeTabId == tabId {
             activeTabId = openTabs.last?.id
-            selectedNoteId = openTabs.last.flatMap { tab in
-                notes.first(where: { $0.id == tab.noteId })?.id
-            }
+            selectedNoteId = openTabs.last?.noteId
         }
     }
 
     func saveNote(_ note: Note) {
-        if let index = notes.firstIndex(where: { $0.id == note.id }) {
-            var updated = note
-            updated.updatedAt = Int64(Date().timeIntervalSince1970)
-            notes[index] = updated
-            database.saveNote(updated)
+        Task {
+            do {
+                try await noteService.save(note)
+                
+                // Update local state
+                if let index = notes.firstIndex(where: { $0.id == note.id }) {
+                    notes[index] = note
+                }
+            } catch {
+                self.error = error as? ScribeError ?? .unknown(error)
+            }
         }
     }
-
-    // MARK: - Private
-
-    private func loadData() {
-        Task {
-            projects = await database.loadProjects()
-            notes = await database.loadNotes()
+    
+    func deleteNote(_ noteId: String) async {
+        do {
+            try await noteService.delete(id: noteId)
+            notes.removeAll { $0.id == noteId }
+            
+            // Close tab if open
+            if let tabId = openTabs.first(where: { $0.noteId == noteId })?.id {
+                closeTab(tabId)
+            }
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+    
+    // MARK: - Project Actions
+    
+    func createProject(name: String, type: ProjectType) async {
+        do {
+            let project = try await projectService.create(
+                name: name,
+                description: nil,
+                type: type
+            )
+            projects.append(project)
+            selectedProjectId = project.id
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+    
+    func deleteProject(_ projectId: String) async {
+        do {
+            try await projectService.delete(id: projectId)
+            projects.removeAll { $0.id == projectId }
+            
+            if selectedProjectId == projectId {
+                selectedProjectId = nil
+            }
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+    
+    // MARK: - Search
+    
+    func searchNotes(query: String) async -> [Note] {
+        do {
+            return try await noteService.search(query: query, projectId: selectedProjectId)
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+            return []
         }
     }
 }
