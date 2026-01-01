@@ -26,6 +26,7 @@ struct HybridEditorView: View {
     @State private var showRightSidebar = true
     @State private var isFocusMode = false
     @FocusState private var isEditorFocused: Bool
+    @State private var cursorPosition: Int = 0
     
     // Autocomplete State
     @State private var showTagAutocomplete = false
@@ -155,11 +156,16 @@ struct HybridEditorView: View {
             detectTriggers(in: newValue)
             saveNote()
         }
+        .onChange(of: content) { _, newValue in
+            // Update cursor position to end on content change
+            cursorPosition = newValue.count
+        }
         .onChange(of: title) { _, newValue in
             saveNote()
         }
         .onAppear {
             isEditorFocused = true
+            cursorPosition = 0
         }
     }
     
@@ -227,7 +233,7 @@ struct HybridEditorView: View {
             updated.content = content
             
             Task {
-                await appState.saveNote(updated)
+                appState.saveNote(updated)
             }
         }
     }
@@ -249,19 +255,27 @@ struct HybridEditorView: View {
     }
 
     private func insertTag(_ tag: String) {
-        // Simple append for now, ideally replaces the #query
-        content += tag.hasPrefix("#") ? String(tag.dropFirst()) : tag
+        // Replace #query with tag
+        let tagText = tag.hasPrefix("#") ? String(tag.dropFirst()) : tag
+        insertText(tagText)
         showTagAutocomplete = false
     }
 
     private func insertCitation(_ key: String) {
-        content += key
+        insertText(key)
         showCitationAutocomplete = false
     }
 
     private func insertMarkdown(prefix: String, suffix: String) {
-        // Simple append for now
-        content += prefix + suffix
+        insertText(prefix + suffix)
+    }
+
+    private func insertText(_ text: String) {
+        // Insert at cursor position
+        let safePosition = min(cursorPosition, content.count)
+        let index = content.index(content.startIndex, offsetBy: safePosition)
+        content.insert(contentsOf: text, at: index)
+        cursorPosition = safePosition + text.count
     }
 }
 

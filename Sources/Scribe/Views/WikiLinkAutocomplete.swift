@@ -88,7 +88,7 @@ struct WikiLinkAutocomplete: View {
         var updated = currentNote
         updated.content = link + updated.content
         Task {
-            await appState.saveNote(updated)
+            appState.saveNote(updated)
         }
     }
 }
