@@ -1,134 +1,105 @@
 import SwiftUI
 
-/// Main editor area with tabs and page editor
+/// Editor area with tabs and content
 struct EditorArea: View {
     @EnvironmentObject var appState: AppState
-
+    
     var body: some View {
         VStack(spacing: 0) {
-            // Tab bar
-            EditorTabBar()
-
-            Divider()
-
-            // Editor content
-            if let pageId = appState.selectedPageId,
-               let page = appState.pages.first(where: { $0.id == pageId }) {
-                PageEditor(page: page)
-            } else {
-                // Empty state - Mission Control
-                MissionControlView()
+            // Editor tabs
+            if !appState.openTabs.isEmpty {
+                EditorTabBar()
+                Divider()
+            }
+            
+            // Content
+            Group {
+                if let selectedNoteId = appState.selectedNoteId,
+                   let note = appState.notes.first(where: { $0.id == selectedNoteId }) {
+                    // Show note editor
+                    HybridEditorView(note: note)
+                } else {
+                    // Show mission control
+                    MissionControlView()
+                }
             }
         }
     }
 }
 
-// MARK: - Tab Bar
+// MARK: - Editor Tab Bar
 
 private struct EditorTabBar: View {
     @EnvironmentObject var appState: AppState
-
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 2) {
-                // Pinned Mission Control tab
-                TabButton(
-                    title: "Mission Control",
-                    icon: "square.grid.2x2",
-                    isActive: appState.selectedPageId == nil,
-                    isPinned: true
-                ) {
-                    appState.selectedPageId = nil
-                    appState.activeTabId = nil
-                }
-
+            HStack(spacing: 0) {
                 ForEach(appState.openTabs) { tab in
-                    if let page = appState.pages.first(where: { $0.id == tab.pageId }) {
-                        TabButton(
-                            title: page.title,
-                            icon: page.isDaily ? "calendar" : "doc.text",
-                            isActive: appState.activeTabId == tab.id,
-                            isPinned: tab.isPinned
-                        ) {
-                            appState.activeTabId = tab.id
-                            appState.selectedPageId = page.id
-                        } onClose: {
-                            appState.closeTab(tab.id)
-                        }
-                    }
+                    EditorTab(tab: tab)
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
         }
-        .background(Color(.windowBackgroundColor))
+        .frame(height: 40)
+        .background(Color(.controlBackgroundColor))
     }
 }
 
-// MARK: - Tab Button (Gradient Style)
-
-private struct TabButton: View {
-    let title: String
-    let icon: String
-    let isActive: Bool
-    let isPinned: Bool
-    let action: () -> Void
-    var onClose: (() -> Void)? = nil
-
-    @State private var isHovering = false
-
+private struct EditorTab: View {
+    let tab: NoteTab
+    @EnvironmentObject var appState: AppState
+    
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 11))
-
-                Text(title)
-                    .font(.system(size: 12, weight: isActive ? .medium : .regular))
+        Button {
+            appState.selectedNoteId = tab.noteId
+            appState.activeTabId = tab.id
+        } label: {
+            HStack(spacing: 8) {
+                // Note title
+                Text(noteTitle)
                     .lineLimit(1)
-
-                if !isPinned, isHovering || isActive {
-                    Button(action: { onClose?() }) {
+                    .font(.system(size: 13))
+                
+                // Close button
+                if !tab.isPinned {
+                    Button {
+                        appState.closeTab(tab.id)
+                    } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 9, weight: .medium))
+                            .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
+                } else {
+                    Image(systemName: "pin.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
                 }
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                Group {
-                    if isActive {
-                        // Gradient background for active tab
-                        LinearGradient(
-                            colors: [
-                                Color.accentColor.opacity(0.3),
-                                Color.accentColor.opacity(0.1)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    } else if isHovering {
-                        Color(.controlBackgroundColor)
-                    } else {
-                        Color.clear
-                    }
-                }
-            )
-            .cornerRadius(6)
+            .padding(.vertical, 8)
+            .background(isActive ? Color.accentColor.opacity(0.1) : Color.clear)
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(isActive ? Color.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
+                Rectangle()
+                    .frame(height: 2)
+                    .foregroundColor(isActive ? .accentColor : .clear),
+                alignment: .top
             )
         }
         .buttonStyle(.plain)
-        .onHover { isHovering = $0 }
+    }
+    
+    private var noteTitle: String {
+        appState.notes.first(where: { $0.id == tab.noteId })?.title ?? "Untitled"
+    }
+    
+    private var isActive: Bool {
+        appState.activeTabId == tab.id
     }
 }
 
 #Preview {
     EditorArea()
         .environmentObject(AppState())
+        .frame(width: 800, height: 600)
 }

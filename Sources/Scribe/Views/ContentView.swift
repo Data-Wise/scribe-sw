@@ -1,50 +1,65 @@
 import SwiftUI
 
-/// Main app layout with sidebar, editor, and right panel
+/// Main content view with sidebar and editor
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @State private var columnVisibility = NavigationSplitViewVisibility.automatic
-
+    
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            // Left sidebar - vault navigation
+            // Sidebar
             VaultSidebar()
                 .navigationSplitViewColumnWidth(min: 200, ideal: 260, max: 350)
         } detail: {
-            // Editor area with tabs
+            // Main editor area
             EditorArea()
         }
-        .navigationSplitViewStyle(.balanced)
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
                 Button(action: { appState.showSidebar.toggle() }) {
                     Image(systemName: "sidebar.left")
                 }
-                .help("Toggle sidebar (⌘[)")
+                .help("Toggle Sidebar (⌘B)")
+                .keyboardShortcut("b", modifiers: .command)
             }
-
+            
             ToolbarItemGroup(placement: .primaryAction) {
-                Button(action: { appState.createNewPage() }) {
-                    Image(systemName: "square.and.pencil")
+                Button(action: { Task { await appState.createNewNote() } }) {
+                    Image(systemName: "doc.badge.plus")
                 }
-                .help("New page (⌘N)")
-
-                Button(action: { appState.openDailyNote() }) {
+                .help("New Note (⌘N)")
+                .keyboardShortcut("n", modifiers: .command)
+                
+                Button(action: { Task { await appState.openDailyNote() } }) {
                     Image(systemName: "calendar")
                 }
-                .help("Daily note (⌘D)")
-
+                .help("Daily Note (⌘D)")
+                .keyboardShortcut("d", modifiers: .command)
+                
                 Button(action: { appState.showQuickCapture = true }) {
                     Image(systemName: "bolt.fill")
                 }
-                .help("Quick capture (⌘⇧C)")
+                .help("Quick Capture (⌘⇧C)")
+                .keyboardShortcut("c", modifiers: [.command, .shift])
             }
         }
-        .frame(minWidth: 800, minHeight: 600)
+        .sheet(isPresented: $appState.showQuickCapture) {
+            QuickCaptureView()
+        }
+        .alert("Error", isPresented: .constant(appState.error != nil)) {
+            Button("OK") {
+                appState.error = nil
+            }
+        } message: {
+            if let error = appState.error {
+                Text(error.localizedDescription)
+            }
+        }
     }
 }
 
 #Preview {
     ContentView()
         .environmentObject(AppState())
+        .frame(width: 1200, height: 800)
 }
