@@ -1,5 +1,5 @@
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 import SwiftUI
 
 // MARK: - Color Helper

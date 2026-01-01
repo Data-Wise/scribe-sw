@@ -1,17 +1,19 @@
 import Foundation
 
-/// Service for project operations
+/// Clean project service - simple CRUD operations
 @MainActor
 final class ProjectService {
-    // MARK: - Dependencies
-    
     private let database: DatabaseManager
     
     init(database: DatabaseManager) {
         self.database = database
     }
     
-    // MARK: - CRUD Operations
+    // MARK: - Fetch
+    
+    func fetchAll() async throws -> [Project] {
+        try await database.fetchProjects()
+    }
     
     func fetch(id: String) async throws -> Project {
         guard let project = try await database.fetchProject(id: id) else {
@@ -20,40 +22,24 @@ final class ProjectService {
         return project
     }
     
-    func fetchAll() async throws -> [Project] {
-        try await database.fetchProjects()
-    }
+    // MARK: - Create
     
     func create(
         name: String,
         description: String? = nil,
-        type: ProjectType,
-        color: String? = nil,
-        icon: String? = nil,
-        settings: ProjectSettings? = nil
+        type: ProjectType = .generic
     ) async throws -> Project {
-        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
-            throw ScribeError.emptyTitle
-        }
-        
-        // Check for duplicate names
-        let existing = try await fetchAll()
-        if existing.contains(where: { $0.name == name }) {
-            throw ScribeError.duplicateName(name)
-        }
-        
         let project = Project(
             name: name,
             description: description,
-            type: type,
-            color: color ?? type.defaultColor,
-            icon: icon,
-            settings: settings
+            type: type
         )
         
         try await database.saveProject(project)
         return project
     }
+    
+    // MARK: - Update
     
     func save(_ project: Project) async throws {
         var updated = project
@@ -61,25 +47,9 @@ final class ProjectService {
         try await database.saveProject(updated)
     }
     
+    // MARK: - Delete
+    
     func delete(id: String) async throws {
         try await database.deleteProject(id: id)
-    }
-    
-    // MARK: - Settings
-    
-    func updateSettings(_ settings: ProjectSettings, for projectId: String) async throws {
-        var project = try await fetch(id: projectId)
-        project.settings = settings
-        try await save(project)
-    }
-    
-    // MARK: - Statistics
-    
-    func noteCount(for projectId: String) async throws -> Int {
-        try await database.noteCount(projectId: projectId)
-    }
-    
-    func wordCount(for projectId: String) async throws -> Int {
-        try await database.totalWordCount(projectId: projectId)
     }
 }

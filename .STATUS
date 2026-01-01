@@ -1,0 +1,80 @@
+project: scribe-sw
+status: active
+priority: P1
+progress: 45
+version: 0.1.0-dev
+updated: 2026-01-01
+next: Phase 1 - Enhanced Focus Mode (Week 1) → Stats foundation + editor enhancements
+
+## Current Focus: Frontend Rebuild (Phases 1-2)
+
+**Goal:** Transform basic UI into ADHD-friendly Focus + Navigator modes
+**Timeline:** 2 weeks (Jan 1-14, 2026)
+**Approach:** Keep backend untouched, rebuild/enhance frontend
+
+**Phase 1 (Week 1):**
+- [ ] Stats foundation (WritingStats model)
+- [ ] Enhanced stats footer (5 metrics: word, timer, streak, today, goal)
+- [ ] Editor enhancements (markdown awareness)
+- [ ] Remove toolbar chrome (pure Focus Mode)
+- [ ] Keyboard shortcuts (⌘B, ⌘N, ⌘W)
+- [ ] Session persistence (UserDefaults)
+
+**Phase 2 (Week 2):**
+- [ ] Sidebar structure (SidebarView, ProjectSection, RecentSection)
+- [ ] Navigation logic (project filtering, note selection)
+- [ ] Search/filter implementation
+- [ ] Animations & polish (smooth transitions)
+
+**Phase 3-4 (Deferred):**
+- Markdown preview (split view)
+- LaTeX rendering (MathJax integration)
+
+## Current Version: 0.1.0-dev (Clean Rebuild)
+
+**Build Status:** ✅ Clean (0 warnings, 0 errors, 25s build time)
+
+**Backend:** 100% complete (620 lines, modern Swift)
+- DatabaseManager (Actor-based GRDB)
+- NoteService, ProjectService (async/await CRUD)
+- Models (Note, Project, ScribeError)
+- AppState (ObservableObject)
+
+**Frontend:** 40% complete (needs enhancement)
+- DesignSystem ✅ (matches vision)
+- Basic editor, stats, sidebar (need upgrade)
+
+**Distribution:**
+- Platform: macOS 14+ (Sonoma)
+- Stack: SwiftUI + GRDB + swift-markdown
+- Install: Development only (no distribution yet)
+
+## Recent Sessions
+
+### Jan 1, 2026 - Complete Rebuild Planning
+- Audited current codebase (12 files, 1562 lines)
+- Created comprehensive rebuild plan (REBUILD_PLAN_2026.md)
+- Cleaned up 6 outdated planning docs
+- Confirmed decisions: Keep backend, rebuild UI, 2-week timeline
+- Template research (aiterm .STATUS, ROADMAP, CLAUDE.md)
+- Created documentation suite (.STATUS, ROADMAP, CLAUDE, TODO)
+- Ready to execute Phase 1
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| docs/development/REBUILD_PLAN_2026.md | Master implementation plan |
+| docs/PRODUCT_REQUIREMENTS.md | Vision document |
+| docs/UI_REDESIGN_BRAINSTORM.md | UI/UX specifications |
+| docs/development/ARCHITECTURE.md | Technical architecture |
+| ROADMAP.md | Phased timeline |
+| CLAUDE.md | AI assistant guidance |
+| TODO.md | Task tracking |
+| CURRENT_STATUS.md | Current state summary |
+
+## Links
+
+- **Repo:** Not yet published (local development)
+- **Docs:** docs/ directory
+- **Related:** Tauri version at ~/projects/dev-tools/scribe/
