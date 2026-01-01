@@ -107,5 +107,5 @@ private struct EditorStatusBar: View {
 
 #Preview {
     NoteEditorView(note: Note(title: "Test Note", content: "Hello world"))
-        .environmentObject(AppState())
+        .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
 }

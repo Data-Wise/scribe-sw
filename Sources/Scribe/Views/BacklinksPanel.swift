@@ -53,6 +53,7 @@ struct BacklinksPanel: View {
                     .padding(.vertical, 8)
                 }
             }
+            Spacer()
         }
         .frame(width: 300)
         .background(Color(.controlBackgroundColor))
@@ -68,12 +69,7 @@ struct BacklinksPanel: View {
         isLoading = true
         defer { isLoading = false }
         
-        do {
-            backlinks = try await NoteService.shared.backlinks(for: note.id)
-        } catch {
-            print("Failed to load backlinks: \(error)")
-            backlinks = []
-        }
+        backlinks = await appState.backlinks(for: note.id)
     }
 }
 
@@ -133,6 +129,9 @@ private struct BacklinkRow: View {
         title: "Mediation Analysis",
         content: "Statistical mediation..."
     ))
-    .environmentObject(AppState())
+    .environmentObject(AppState(
+        noteService: NoteService(database: DatabaseManager.shared),
+        projectService: ProjectService(database: DatabaseManager.shared)
+    ))
     .frame(height: 400)
 }

@@ -130,7 +130,7 @@ actor DatabaseManager {
             
             try db.execute(sql: """
                 CREATE TRIGGER notes_au AFTER UPDATE ON notes BEGIN
-                    UPDATE notes_fts 
+                    UPDATE notes_fts
                     SET title = new.title, content = new.content
                     WHERE note_id = old.id;
                 END
@@ -141,6 +141,40 @@ actor DatabaseManager {
                     DELETE FROM notes_fts WHERE note_id = old.id;
                 END
                 """)
+        }
+        
+        // Migration v4: Add word_count column
+        migrator.registerMigration("v4_word_count") { db in
+            // Add word_count column if not exists
+            try db.alter(table: "notes") { t in
+                t.add(column: "word_count", .integer).defaults(to: 0)
+            }
+            
+            // Backfill word_count for existing notes
+            // Note: This is a simple word count, can be refined later
+            try db.execute(sql: """
+                UPDATE notes
+                SET word_count = length(trim(content, ' ,.')) - length(replace(trim(content, ' ,.'), ' ', '')) + 1
+                WHERE word_count = 0 OR word_count IS NULL
+                """)
+            
+            // Create index for sorting by word count
+            try db.create(index: "idx_notes_word_count", on: "notes", columns: ["word_count"])
+        }
+        
+        // Migration v5: Add tags table
+        migrator.registerMigration("v5_tags_table") { db in
+            try db.create(table: "tags") { t in
+                t.primaryKey("id", .text)
+                t.column("name", .text).notNull().unique()
+                t.column("color", .text)
+                t.column("created_at", .integer).notNull()
+                
+                t.check(sql: "name GLOB '#*'")
+            }
+            
+            // Create index with NOCASE collation using raw SQL
+            try db.execute(sql: "CREATE INDEX idx_tags_name ON tags(name COLLATE NOCASE)")
         }
         
         return migrator
@@ -176,7 +210,12 @@ actor DatabaseManager {
     
     // MARK: - Notes
     
-    func fetchNotes(projectId: String? = nil, includeDeleted: Bool = false) throws -> [Note] {
+    func fetchNotes(
+        projectId: String? = nil,
+        includeDeleted: Bool = false,
+        limit: Int? = nil,
+        offset: Int = 0
+    ) throws -> [Note] {
         try dbQueue.read { db in
             var query = Note.all()
             
@@ -188,9 +227,13 @@ actor DatabaseManager {
                 query = query.filter(Note.Columns.projectId == projectId)
             }
             
-            return try query
-                .order(Note.Columns.updatedAt.desc)
-                .fetchAll(db)
+            var orderedQuery = query.order(Note.Columns.updatedAt.desc)
+            
+            if let limit = limit {
+                orderedQuery = orderedQuery.limit(limit, offset: offset)
+            }
+            
+            return try orderedQuery.fetchAll(db)
         }
     }
     
@@ -297,9 +340,16 @@ actor DatabaseManager {
     }
     
     func totalWordCount(projectId: String? = nil) throws -> Int {
-        // This would require loading all notes and calculating
-        // For better performance, consider storing word_count in database
-        let notes = try fetchNotes(projectId: projectId, includeDeleted: false)
-        return notes.reduce(0) { $0 + $1.wordCount }
+        try dbQueue.read { db in
+            var request = Note
+                .select(sql: "SUM(word_count)")
+                .filter(Note.Columns.deletedAt == nil)
+            
+            if let projectId {
+                request = request.filter(Note.Columns.projectId == projectId)
+            }
+            
+            return try Int.fetchOne(db, request) ?? 0
+        }
     }
 }

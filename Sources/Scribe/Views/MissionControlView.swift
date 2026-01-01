@@ -52,7 +52,7 @@ struct MissionControlView: View {
                         icon: "magnifyingglass",
                         color: .purple
                     ) {
-                        // TODO: Show search
+                        appState.showCommandPalette = true
                     }
                 }
                 .padding(.horizontal)
@@ -78,6 +78,78 @@ struct MissionControlView: View {
         }
         .frame(maxWidth: 800)
         .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Components
+
+private struct QuickActionCard: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(color)
+                
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+            .background(Color(.controlBackgroundColor))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct NoteListItem: View {
+    let note: Note
+    @EnvironmentObject var appState: AppState
+    
+    var body: some View {
+        Button {
+            appState.openNote(note)
+        } label: {
+            HStack(spacing: 12) {
+                Text(note.isDaily ? "📅" : "📄")
+                    .font(.title3)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(note.title)
+                        .font(.body.bold())
+                    Text(note.preview)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+                
+                Text(note.modifiedDate.formatted(.relative(presentation: .named)))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding()
+            .background(Color(.controlBackgroundColor))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.primary.opacity(0.05), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
     }
 }
 
@@ -230,5 +302,5 @@ private struct StatCard: View {
 
 #Preview {
     MissionControlView()
-        .environmentObject(AppState())
+        .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
 }

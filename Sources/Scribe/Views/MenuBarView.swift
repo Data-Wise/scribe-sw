@@ -64,5 +64,5 @@ struct MenuBarView: View {
 
 #Preview {
     MenuBarView()
-        .environmentObject(AppState())
+        .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
 }

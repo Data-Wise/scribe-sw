@@ -15,6 +15,7 @@ struct Note: Identifiable, Codable, Hashable, Sendable {
     var createdAt: Int64
     var updatedAt: Int64
     var deletedAt: Int64?
+    var wordCount: Int
     
     // MARK: - Initialization
     
@@ -27,7 +28,8 @@ struct Note: Identifiable, Codable, Hashable, Sendable {
         metadata: NoteMetadata? = nil,
         createdAt: Int64 = Date().unixTimestamp,
         updatedAt: Int64 = Date().unixTimestamp,
-        deletedAt: Int64? = nil
+        deletedAt: Int64? = nil,
+        wordCount: Int = 0
     ) {
         self.id = id
         self.projectId = projectId
@@ -38,6 +40,7 @@ struct Note: Identifiable, Codable, Hashable, Sendable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
+        self.wordCount = wordCount
     }
     
     // MARK: - Computed Properties
@@ -54,7 +57,7 @@ struct Note: Identifiable, Codable, Hashable, Sendable {
         Date(unixTimestamp: updatedAt)
     }
     
-    var wordCount: Int {
+    func calculateWordCount() -> Int {
         let text = content
             .replacingOccurrences(of: "```[\\s\\S]*?```", with: "", options: .regularExpression)
             .replacingOccurrences(of: "`[^`]+`", with: "", options: .regularExpression)
@@ -120,10 +123,11 @@ extension Note: FetchableRecord, PersistableRecord {
         static let createdAt = Column("created_at")
         static let updatedAt = Column("updated_at")
         static let deletedAt = Column("deleted_at")
+        static let wordCount = Column("word_count")
     }
     
     enum CodingKeys: String, CodingKey {
-        case id, title, content, folder, metadata
+        case id, title, content, folder, metadata, wordCount
         case projectId = "project_id"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -146,6 +150,7 @@ extension Note {
         container["created_at"] = createdAt
         container["updated_at"] = updatedAt
         container["deleted_at"] = deletedAt
+        container["word_count"] = wordCount
         
         if let metadata {
             let data = try Self.jsonEncoder.encode(metadata)
@@ -162,6 +167,7 @@ extension Note {
         self.createdAt = row["created_at"]
         self.updatedAt = row["updated_at"]
         self.deletedAt = row["deleted_at"]
+        self.wordCount = row["word_count"]
         
         if let metadataString: String = row["metadata"],
            let data = metadataString.data(using: .utf8) {

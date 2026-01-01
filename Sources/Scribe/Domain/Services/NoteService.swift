@@ -4,15 +4,11 @@ import Foundation
 /// Provides business logic layer between UI and database
 @MainActor
 final class NoteService {
-    // MARK: - Singleton
-    
-    static let shared = NoteService()
-    
     // MARK: - Dependencies
     
     private let database: DatabaseManager
     
-    init(database: DatabaseManager = .shared) {
+    init(database: DatabaseManager) {
         self.database = database
     }
     
@@ -25,8 +21,18 @@ final class NoteService {
         return note
     }
     
-    func fetchAll(projectId: String? = nil, includeDeleted: Bool = false) async throws -> [Note] {
-        try await database.fetchNotes(projectId: projectId, includeDeleted: includeDeleted)
+    func fetchAll(
+        projectId: String? = nil,
+        includeDeleted: Bool = false,
+        limit: Int? = nil,
+        offset: Int = 0
+    ) async throws -> [Note] {
+        try await database.fetchNotes(
+            projectId: projectId,
+            includeDeleted: includeDeleted,
+            limit: limit,
+            offset: offset
+        )
     }
     
     func create(
@@ -40,21 +46,33 @@ final class NoteService {
             throw ScribeError.emptyTitle
         }
         
+        let wordCount = calculateWordCount(for: content)
+        
         let note = Note(
             projectId: projectId,
             title: title,
             content: content,
             folder: folder,
-            metadata: metadata
+            metadata: metadata,
+            wordCount: wordCount
         )
         
         try await database.saveNote(note)
         return note
     }
     
+    private func calculateWordCount(for content: String) -> Int {
+        let text = content
+            .replacingOccurrences(of: "```[\\s\\S]*?```", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "`[^`]+`", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "[#*_~>\\-]", with: "", options: .regularExpression)
+        return text.split(separator: " ").count
+    }
+    
     func save(_ note: Note) async throws {
         var updated = note
         updated.updatedAt = Date().unixTimestamp
+        updated.wordCount = calculateWordCount(for: note.content)
         try await database.saveNote(updated)
     }
     

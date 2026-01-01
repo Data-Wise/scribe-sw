@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CodeMirror 5 Stub</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #282a36;
+            overflow: hidden;
+        }
+
+        #editor {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .CodeMirror {
+            font-family: monospace;
+            height: 100%;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        // Inline Stub for Debugging
+        window.CodeMirror = function (parent, options) {
+            window.webkit?.messageHandlers?.consoleLog?.postMessage("JS: Mock CodeMirror Initialized (Inline)");
+            const textarea = document.createElement("textarea");
+            textarea.style.width = "100%";
+            textarea.style.height = "100%";
+            textarea.value = options.value || "";
+            textarea.style.background = "#282a36";
+            textarea.style.color = "#f8f8f2";
+            parent.appendChild(textarea);
+
+            const instance = {
+                getValue: () => textarea.value,
+                setValue: (v) => textarea.value = v,
+                on: (e, cb) => {
+                    if (e === "change") textarea.addEventListener("input", () => cb(instance, { origin: "+input" }));
+                },
+                getCursor: () => ({ line: 0, ch: 0 }),
+                setCursor: () => { }
+            };
+            return instance;
+        };
+    </script>
+</head>
+
+<body>
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            window.webkit?.messageHandlers?.consoleLog?.postMessage("JS Error: " + msg + " at " + line + ":" + col);
+        };
+    </script>
+
+    <div id="editor"></div>
+
+    <script>
+        // Bridge Logic
+        const bridge = window.webkit?.messageHandlers?.scribeBridge;
+        const logger = window.webkit?.messageHandlers?.consoleLog;
+
+        function log(msg) {
+            if (logger) logger.postMessage(msg);
+        }
+
+        log("Initializing CodeMirror 5 Stub...");
+
+        // Initialize Editor
+        const editor = CodeMirror(document.getElementById("editor"), {
+            mode: "markdown",
+            value: "Loading..."
+        });
+
+        // Loop changes back
+        editor.on("change", function (cm, change) {
+            if (change.origin === "setValue") return;
+            const content = cm.getValue();
+            if (bridge) bridge.postMessage({ type: "UPDATE_CONTENT", content: content });
+        });
+
+        log("Stub created.");
+        if (bridge) bridge.postMessage({ type: "EDITOR_READY" });
+
+        window.setMarkdown = function (content) {
+            const current = editor.getValue();
+            if (current !== content) editor.setValue(content);
+        };
+    </script>
+</body>
+
+</html>

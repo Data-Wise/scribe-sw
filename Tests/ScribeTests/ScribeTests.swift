@@ -3,33 +3,33 @@ import XCTest
 
 final class ScribeTests: XCTestCase {
 
-    func testPageWordCount() {
-        let page = Page(
+    func testNoteWordCount() {
+        let note = Note(
             title: "Test",
             content: "Hello world this is a test"
         )
-        XCTAssertEqual(page.wordCount, 6)
+        XCTAssertEqual(note.wordCount, 6)
     }
 
-    func testPagePreview() {
-        let page = Page(
+    func testNotePreview() {
+        let note = Note(
             title: "Test",
             content: "First line\nSecond line"
         )
-        XCTAssertTrue(page.preview.contains("First line"))
-        XCTAssertFalse(page.preview.contains("\n"))
+        XCTAssertTrue(note.preview.contains("First line"))
+        XCTAssertFalse(note.preview.contains("\n"))
     }
 
-    func testVaultTypes() {
-        XCTAssertEqual(VaultType.inbox.displayName, "Inbox")
-        XCTAssertEqual(VaultType.research.icon, "magnifyingglass")
+    func testProjectTypes() {
+        XCTAssertEqual(ProjectType.generic.displayName, "Generic")
+        XCTAssertEqual(ProjectType.research.systemImage, "magnifyingglass")
     }
 
-    func testPageIsDeleted() {
-        var page = Page(title: "Test")
-        XCTAssertFalse(page.isDeleted)
+    func testNoteIsDeleted() {
+        var note = Note(title: "Test")
+        XCTAssertFalse(note.deletedAt != nil)
 
-        page.deletedAt = Date()
-        XCTAssertTrue(page.isDeleted)
+        note.deletedAt = Date().unixTimestamp
+        XCTAssertTrue(note.deletedAt != nil)
     }
 }

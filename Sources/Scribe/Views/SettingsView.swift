@@ -225,5 +225,5 @@ private struct ShortcutRow: View {
 
 #Preview {
     SettingsView()
-        .environmentObject(AppState())
+        .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
 }

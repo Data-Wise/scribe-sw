@@ -3,14 +3,28 @@ import WebKit
 
 /// Hybrid editor with source/preview split view
 struct HybridEditorView: View {
+    enum EditorMode: String, CaseIterable {
+        case markdown = "Edit"
+        case split = "Split"
+        case preview = "Read"
+        
+        var icon: String {
+            switch self {
+            case .markdown: return "square.fill.text.grid.1x2"
+            case .split: return "square.split.2x1"
+            case .preview: return "book"
+            }
+        }
+    }
+    
     let note: Note
     @EnvironmentObject var appState: AppState
     
     @State private var content: String
     @State private var title: String
-    @State private var showPreview = true
+    @AppStorage("editorMode_v2") private var mode: EditorMode = .markdown
     @State private var showRightSidebar = true
-    @State private var splitRatio: CGFloat = 0.5
+    @State private var isFocusMode = false
     @FocusState private var isEditorFocused: Bool
     
     // Autocomplete State
@@ -18,6 +32,8 @@ struct HybridEditorView: View {
     @State private var tagQuery = ""
     @State private var showWikiLinkAutocomplete = false
     @State private var wikiLinkQuery = ""
+    @State private var showCitationAutocomplete = false
+    @State private var citationQuery = ""
     
     init(note: Note) {
         self.note = note
@@ -29,67 +45,74 @@ struct HybridEditorView: View {
         HStack(spacing: 0) {
             // Main editor
             VStack(spacing: 0) {
-                // Title bar
-                TitleBar(title: $title, note: note)
+                if !isFocusMode {
+                    // Enhanced Title Bar with Mode Pill
+                    TitleBar(title: $title, mode: $mode, note: note)
+                    
+                    Divider()
+                }
                 
-                Divider()
-                
-                // Editor content
+                // Editor content area
                 ZStack(alignment: .topLeading) {
-                    GeometryReader { geometry in
-                        if showPreview {
-                            // Split view: Source + Preview
-                            HSplitView {
-                                SourceEditorView(content: $content, isEditorFocused: $isEditorFocused)
-                                    .frame(minWidth: 300)
-                                
+                    Group {
+                        switch mode {
+                        case .markdown:
+                            CodeMirrorEditorView(content: $content)
+                                .transition(.asymmetric(insertion: .move(edge: .leading), removal: .opacity))
+                        case .split:
+                            HStack(spacing: 0) {
+                                CodeMirrorEditorView(content: $content)
+                                Divider()
                                 MarkdownPreview(content: content)
-                                    .frame(minWidth: 300)
                             }
-                        } else {
-                            // Source only
-                            SourceEditorView(content: $content, isEditorFocused: $isEditorFocused)
+                            .transition(.opacity)
+                        case .preview:
+                            MarkdownPreview(content: content)
+                                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
                         }
                     }
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: mode)
                     
                     // Autocomplete overlays
                     if showTagAutocomplete {
                         TagAutocompleteView(tags: filteredTags) { tag in
                             insertTag(tag)
                         }
-                        .offset(x: 20, y: 50) // Simplified positioning
+                        .offset(x: 20, y: 20)
                     }
                     
                     if showWikiLinkAutocomplete {
                         WikiLinkAutocomplete(suggestions: filteredSuggestions) { suggestion in
                             insertWikiLink(suggestion.title)
                         }
-                        .offset(x: 20, y: 50)
+                        .offset(x: 20, y: 20)
+                    }
+                    
+                    if showCitationAutocomplete {
+                        CitationAutocomplete(citations: appState.filteredCitations(query: citationQuery)) { citation in
+                            insertCitation(citation.id)
+                        }
+                        .offset(x: 20, y: 20)
                     }
                 }
                 
-                Divider()
-                
-                // Status bar
-                StatusBar(note: note, content: content, wordCount: wordCount)
+                if !isFocusMode {
+                    Divider()
+                    
+                    // Clustered Status Bar
+                    StatusBar(note: note, content: content, wordCount: wordCount)
+                }
             }
             
             // Right sidebar
-            if showRightSidebar {
+            if showRightSidebar && !isFocusMode {
                 Divider()
                 RightSidebar(note: note)
+                    .accessibilityIdentifier("Right Sidebar")
             }
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button {
-                    showPreview.toggle()
-                } label: {
-                    Image(systemName: showPreview ? "eye.fill" : "eye.slash")
-                }
-                .help("Toggle Preview (⌘P)")
-                .keyboardShortcut("p", modifiers: .command)
-                
                 Button {
                     showRightSidebar.toggle()
                 } label: {
@@ -98,26 +121,35 @@ struct HybridEditorView: View {
                 .help("Toggle Sidebar (⌘⌥R)")
                 .keyboardShortcut("r", modifiers: [.command, .option])
                 
+                Button {
+                    isFocusMode.toggle()
+                } label: {
+                    Image(systemName: isFocusMode ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
+                }
+                .help("Focus Mode (⌘⇧F)")
+                .keyboardShortcut("f", modifiers: [.command, .shift])
+                
                 Menu {
                     Button("Bold", action: { insertMarkdown("**", "**") })
                         .keyboardShortcut("b", modifiers: .command)
                     Button("Italic", action: { insertMarkdown("*", "*") })
                         .keyboardShortcut("i", modifiers: .command)
-                    Button("Code", action: { insertMarkdown("`", "`") })
-                        .keyboardShortcut("e", modifiers: .command)
                     Divider()
                     Button("Heading 1", action: { insertMarkdown("# ", "") })
                     Button("Heading 2", action: { insertMarkdown("## ", "") })
-                    Button("Heading 3", action: { insertMarkdown("### ", "") })
-                    Divider()
-                    Button("Inline Math", action: { insertMarkdown("$", "$") })
-                    Button("Display Math", action: { insertMarkdown("$$\n", "\n$$") })
                 } label: {
                     Image(systemName: "textformat")
                 }
                 .help("Formatting")
             }
         }
+        .background(
+            ZStack {
+                Button("") { mode = .markdown }.keyboardShortcut("1", modifiers: .command).opacity(0)
+                Button("") { mode = .split }.keyboardShortcut("2", modifiers: .command).opacity(0)
+                Button("") { mode = .preview }.keyboardShortcut("3", modifiers: .command).opacity(0)
+            }
+        )
         .onChange(of: content) { _, newValue in
             detectTriggers(in: newValue)
             saveNote()
@@ -155,6 +187,19 @@ struct HybridEditorView: View {
         } else {
             showWikiLinkAutocomplete = false
         }
+        
+        // Detect @cite
+        if let lastAt = text.range(of: "@", options: .backwards) {
+            let afterAt = text[lastAt.upperBound...]
+            if !afterAt.contains(where: { $0.isWhitespace }) {
+                showCitationAutocomplete = true
+                citationQuery = String(afterAt)
+            } else {
+                showCitationAutocomplete = false
+            }
+        } else {
+            showCitationAutocomplete = false
+        }
     }
     
     private func saveNote() {
@@ -182,7 +227,7 @@ struct HybridEditorView: View {
     
     private func insertTag(_ tag: String) {
         // Simple append for now, ideally replaces the #query
-        content += tag.hasPrefix("#") ? tag.dropFirst() : tag
+        content += tag.hasPrefix("#") ? String(tag.dropFirst()) : tag
         showTagAutocomplete = false
     }
     
@@ -190,78 +235,58 @@ struct HybridEditorView: View {
         content += title + "]]"
         showWikiLinkAutocomplete = false
     }
-}
-
-// MARK: - Source Editor View (Renamed for consistency)
-
-private struct SourceEditorView: View {
-    @Binding var content: String
-    var isEditorFocused: FocusState<Bool>.Binding
     
-    var body: some View {
-        TextEditor(text: $content)
-            .font(.system(size: 15, design: .monospaced))
-            .scrollContentBackground(.hidden)
-            .padding(20)
-            .focused(isEditorFocused)
-            .background(Color(.textBackgroundColor))
+    private func insertCitation(_ key: String) {
+        content += key
+        showCitationAutocomplete = false
     }
 }
 
+// MARK: - Title Bar
+
 private struct TitleBar: View {
     @Binding var title: String
+    @Binding var mode: HybridEditorView.EditorMode
     let note: Note
     
     var body: some View {
         HStack {
             TextField("Untitled", text: $title)
-                .font(.system(size: 24, weight: .bold))
+                .font(.system(size: 24, weight: .bold, design: .serif))
                 .textFieldStyle(.plain)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
             
             Spacer()
             
-            // Note metadata
-            VStack(alignment: .trailing, spacing: 4) {
-                if !note.tags.isEmpty {
-                    HStack(spacing: 4) {
-                        ForEach(note.tags.prefix(3), id: \.self) { tag in
-                            Text(tag)
-                                .font(.caption)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.accentColor.opacity(0.1))
-                                .cornerRadius(4)
-                        }
-                    }
+            // Mode Pill - ADHD Friendly Segmented Control
+            Picker("", selection: $mode) {
+                ForEach(HybridEditorView.EditorMode.allCases, id: \.self) { mode in
+                    Label(mode.rawValue, systemImage: mode.icon)
+                        .tag(mode)
                 }
-                
-                Text(note.modifiedDate.formatted(.relative(presentation: .named)))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
+            .pickerStyle(.segmented)
+            .frame(width: 280)
+            .background(modeColor.opacity(0.1))
+            .cornerRadius(8)
             .padding(.trailing, 20)
         }
-        .background(Color(.windowBackgroundColor))
+        .background(Color(.windowBackgroundColor).opacity(0.5))
     }
-}
-
-// MARK: - Source Editor
-
-private struct SourceEditor: View {
-    @Binding var content: String
-    var isEditorFocused: FocusState<Bool>.Binding
     
-    var body: some View {
-        TextEditor(text: $content)
-            .font(.system(size: 15, design: .monospaced))
-            .scrollContentBackground(.hidden)
-            .padding(20)
-            .focused(isEditorFocused)
-            .background(Color(.textBackgroundColor))
+    private var modeColor: Color {
+        switch mode {
+        case .markdown: return .blue
+        case .split: return .purple
+        case .preview: return .green
+        }
     }
 }
+
+// MARK: - Source Editor View
+
+// SourceEditorView removed
 
 // MARK: - Markdown Preview
 
@@ -284,57 +309,40 @@ private struct MarkdownPreview: View {
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
             <style>
                 body {
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                    line-height: 1.6;
-                    padding: 20px;
-                    max-width: 800px;
-                    margin: 0 auto;
-                    color: #333;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                    line-height: 1.5;
+                    padding: 30px;
+                    max-width: 100%;
+                    margin: 0;
+                    color: #1a1a1a;
+                    font-size: 15px;
                 }
                 @media (prefers-color-scheme: dark) {
                     body {
-                        background-color: #1e1e1e;
+                        background-color: #1a1a1a;
                         color: #e0e0e0;
                     }
                     a { color: #58a6ff; }
-                    code {
-                        background-color: #2d2d2d;
-                        color: #e0e0e0;
-                    }
                 }
+                h1, h2, h3 { font-family: "New York", serif; font-weight: 700; color: accent; }
                 code {
-                    background-color: #f5f5f5;
-                    padding: 2px 6px;
-                    border-radius: 3px;
-                    font-family: "SF Mono", Monaco, monospace;
-                    font-size: 0.9em;
+                    background-color: rgba(0,0,0,0.05);
+                    padding: 2px 4px;
+                    border-radius: 4px;
+                    font-family: "SF Mono", monospace;
+                    font-size: 0.85em;
+                }
+                @media (prefers-color-scheme: dark) {
+                    code { background-color: rgba(255,255,255,0.1); }
                 }
                 pre {
-                    background-color: #f5f5f5;
+                    background-color: rgba(0,0,0,0.03);
                     padding: 16px;
-                    border-radius: 6px;
+                    border-radius: 8px;
                     overflow-x: auto;
                 }
                 @media (prefers-color-scheme: dark) {
                     pre { background-color: #2d2d2d; }
-                }
-                blockquote {
-                    border-left: 4px solid #ddd;
-                    margin-left: 0;
-                    padding-left: 16px;
-                    color: #666;
-                }
-                h1, h2, h3, h4, h5, h6 {
-                    margin-top: 24px;
-                    margin-bottom: 16px;
-                    font-weight: 600;
-                }
-                a {
-                    color: #0969da;
-                    text-decoration: none;
-                }
-                a:hover {
-                    text-decoration: underline;
                 }
             </style>
         </head>
@@ -342,17 +350,8 @@ private struct MarkdownPreview: View {
             <div id="content"></div>
             <script>
                 const markdown = `\(escapeForJS(content))`;
-                
-                // Configure marked for GFM
-                marked.setOptions({
-                    gfm: true,
-                    breaks: true
-                });
-                
-                // Render markdown
+                marked.setOptions({ gfm: true, breaks: true });
                 document.getElementById('content').innerHTML = marked.parse(markdown);
-                
-                // Render math
                 MathJax.typesetPromise();
             </script>
         </body>
@@ -375,7 +374,7 @@ private struct WebView: NSViewRepresentable {
     
     func makeNSView(context: Context) -> WKWebView {
         let webView = WKWebView()
-        webView.setValue(false, forKey: "drawsBackground") // Transparent background
+        webView.setValue(false, forKey: "drawsBackground")
         return webView
     }
     
@@ -392,27 +391,61 @@ private struct StatusBar: View {
     let wordCount: Int
     
     var body: some View {
-        HStack(spacing: 16) {
-            Label("\(wordCount) words", systemImage: "textformat")
-            Divider().frame(height: 12)
-            Text("\(content.count) characters")
-            Divider().frame(height: 12)
-            Text("\(content.components(separatedBy: .newlines).count) lines")
+        HStack(spacing: 0) {
+            // Group 1: Context
+            HStack(spacing: 8) {
+                Image(systemName: "folder")
+                    .font(.caption2)
+                Text(note.folder)
+                    .font(.caption)
+            }
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 16)
             
+            Divider().frame(height: 16)
+            
+            // Group 2: Metrics (Center)
+            Spacer()
+            HStack(spacing: 16) {
+                HStack(spacing: 4) {
+                    Image(systemName: "textformat")
+                    Text("\(wordCount) words")
+                }
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "clock")
+                    Text("\(readTime) min read")
+                }
+            }
+            .font(.system(size: 11, weight: .medium))
+            .foregroundColor(.primary.opacity(0.8))
             Spacer()
             
-            if !note.tags.isEmpty {
-                Text("\(note.tags.count) tags")
-                Divider().frame(height: 12)
-            }
+            Divider().frame(height: 16)
             
-            Text("Updated \(note.modifiedDate.formatted(.relative(presentation: .named)))")
+            // Group 3: Status
+            HStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    Text("🔥")
+                    Text("7 day streak")
+                }
+                
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 6, height: 6)
+                
+                Text("Synced")
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 16)
         }
-        .font(.caption)
-        .foregroundColor(.secondary)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 8)
+        .frame(height: 32)
         .background(.ultraThinMaterial)
+    }
+    
+    private var readTime: Int {
+        max(1, wordCount / 200)
     }
 }
 
@@ -447,6 +480,6 @@ private struct StatusBar: View {
         - [External Link](https://example.com)
         """
     ))
-    .environmentObject(AppState())
+    .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
     .frame(width: 1000, height: 700)
 }

@@ -71,14 +71,18 @@ struct CommandPaletteView: View {
         .onExitCommand {
             appState.showCommandPalette = false
         }
-        .onKeyboardShortcut(.up) {
-            if selectedIndex > 0 {
-                selectedIndex -= 1
-            }
-        }
-        .onKeyboardShortcut(.down) {
-            if selectedIndex < appState.searchResults.count - 1 {
-                selectedIndex += 1
+        .onMoveCommand { direction in
+            switch direction {
+            case .up:
+                if selectedIndex > 0 {
+                    selectedIndex -= 1
+                }
+            case .down:
+                if selectedIndex < appState.searchResults.count - 1 {
+                    selectedIndex += 1
+                }
+            default:
+                break
             }
         }
         .onKeyboardShortcut(.return) {
@@ -95,6 +99,8 @@ struct CommandPaletteView: View {
         appState.searchResults = []
     }
 }
+
+// MARK: - Components
 
 private struct SearchResultRow: View {
     let note: Note
@@ -113,7 +119,7 @@ private struct SearchResultRow: View {
             }
             Spacer()
             if let projectId = note.projectId {
-                Text(projectId) // Placeholder for project name
+                Text(projectId)
                     .font(.system(size: 10, weight: .bold))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -129,7 +135,6 @@ private struct SearchResultRow: View {
     }
 }
 
-/// Helper for macOS vibrancy
 struct VisualEffectView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
     let blendingMode: NSVisualEffectView.BlendingMode
@@ -148,10 +153,10 @@ struct VisualEffectView: NSViewRepresentable {
     }
 }
 
-// Helper extension for arrow keys in search
+// Helper extension for return key
 extension View {
     func onKeyboardShortcut(_ key: KeyEquivalent, action: @escaping () -> Void) -> some View {
-        self.keyboardShortcut(key, modifiers: []) // This is a simplification, ideally use NSEvent monitors or specific button triggers
+        self.keyboardShortcut(key, modifiers: [])
         return self
     }
 }

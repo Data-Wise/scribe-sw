@@ -11,7 +11,7 @@ let package = Package(
     ],
     dependencies: [
         // Markdown parsing
-        .package(url: "https://github.com/apple/swift-markdown.git", from: "0.3.0"),
+        .package(url: "https://github.com/apple/swift-markdown.git", branch: "main"),
         // SQLite wrapper
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.24.0"),
         // Keyboard shortcuts
@@ -25,7 +25,11 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts"),
             ],
-            path: "Sources/Scribe"
+            path: "Sources/Scribe",
+            resources: [
+                .copy("Resources/lexical"),
+                .copy("Resources/codemirror")
+            ]
         ),
         .testTarget(
             name: "ScribeTests",

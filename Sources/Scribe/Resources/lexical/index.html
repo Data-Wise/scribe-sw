@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Scribe Lexical</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, "New York", serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        #lexical-editor {
+            min-height: 400px;
+            outline: none;
+        }
+
+        .editor-paragraph {
+            margin-bottom: 1em;
+        }
+
+        .editor-heading-h1 {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+        }
+
+        .editor-heading-h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+        }
+
+        .editor-quote {
+            border-left: 4px solid #eee;
+            padding-left: 1em;
+            color: #666;
+            font-style: italic;
+        }
+
+        .editor-text-bold {
+            font-weight: bold;
+        }
+
+        .editor-text-italic {
+            font-style: italic;
+        }
+
+        .editor-text-underline {
+            text-decoration: underline;
+        }
+
+        .editor-list-ol {
+            list-style: decimal;
+            padding-left: 1.5em;
+        }
+
+        .editor-list-ul {
+            list-style: disc;
+            padding-left: 1.5em;
+        }
+
+        .editor-listitem {
+            margin-bottom: 0.25em;
+        }
+
+        .editor-code {
+            background-color: #f5f5f5;
+            font-family: monospace;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .editor-link {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .editor-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function log(msg) {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.consoleLog) {
+                window.webkit.messageHandlers.consoleLog.postMessage(msg);
+            }
+            console.log(msg);
+        }
+        window.onerror = (m, u, l, c, e) => {
+            log(`WINDOW ERR: ${m} at ${l}:${c}`);
+            if (e && e.stack) log(e.stack);
+        };
+        log("BOOT: index.html");
+    </script>
+</head>
+
+<body>
+    <div id="lexical-editor" contenteditable="true"></div>
+
+    <script type="module">
+        log("MODULE: starting");
+        try {
+            const baseUrl = "https://esm.sh";
+            const v = "@0.12.2";
+
+            log("MODULE: fetching deps...");
+            const [LexicalMod, RichTextMod, MarkdownMod, HistoryMod, ListMod, CodeMod, LinkMod] = await Promise.all([
+                import(`${baseUrl}/lexical${v}?bundle`),
+                import(`${baseUrl}/@lexical/rich-text${v}?bundle`),
+                import(`${baseUrl}/@lexical/markdown${v}?bundle`),
+                import(`${baseUrl}/@lexical/history${v}?bundle`),
+                import(`${baseUrl}/@lexical/list${v}?bundle`),
+                import(`${baseUrl}/@lexical/code${v}?bundle`),
+                import(`${baseUrl}/@lexical/link${v}?bundle`)
+            ]);
+
+            const getE = (m) => (m.default && Object.keys(m).length === 1) ? m.default : m;
+
+            // Resolve modules
+            const Lexical = getE(LexicalMod);
+            const RichText = getE(RichTextMod);
+            const Markdown = getE(MarkdownMod);
+            const History = getE(HistoryMod);
+            const List = getE(ListMod);
+            const Code = getE(CodeMod);
+            const Link = getE(LinkMod);
+
+            // Destructure core nodes too
+            const { createEditor, $getRoot, $createTextNode, $createParagraphNode, ParagraphNode, TextNode } = Lexical;
+            const { registerRichText, HeadingNode, QuoteNode } = RichText;
+            const { registerMarkdownShortcuts, TRANSFORMERS, $convertFromMarkdownString, $convertToMarkdownString } = Markdown;
+            const { registerHistory } = History;
+            const { ListNode, ListItemNode } = List;
+            const { CodeNode, CodeHighlightNode } = Code;
+            const { LinkNode, AutoLinkNode } = Link;
+
+            log("MODULE: deps resolved");
+
+            // Auto-discover nodes from transformers
+            const transformerNodes = new Set();
+            TRANSFORMERS.forEach(t => {
+                t.dependencies?.forEach(d => transformerNodes.add(d));
+            });
+
+            const allNodes = [
+                ParagraphNode, TextNode, // Core nodes
+                HeadingNode, QuoteNode,
+                ListNode, ListItemNode,
+                CodeNode, CodeHighlightNode,
+                LinkNode, AutoLinkNode,
+                ...transformerNodes
+            ];
+
+            log(`MODULE: Discovered ${transformerNodes.size} nodes. Total: ${allNodes.length}`);
+            allNodes.forEach(n => log(`Registered Node: ${n.getType ? n.getType() : n.name}`));
+
+            const config = {
+                namespace: 'Scribe',
+                nodes: allNodes,
+                theme: {
+                    paragraph: 'editor-paragraph',
+                    heading: {
+                        h1: 'editor-heading-h1',
+                        h2: 'editor-heading-h2'
+                    },
+                    quote: 'editor-quote',
+                    list: {
+                        ol: 'editor-list-ol',
+                        ul: 'editor-list-ul',
+                        listitem: 'editor-listitem'
+                    },
+                    text: {
+                        bold: 'editor-text-bold',
+                        italic: 'editor-text-italic',
+                        underline: 'editor-text-underline'
+                    },
+                    code: 'editor-code',
+                    link: 'editor-link'
+                },
+                onError: (e) => log(`LEXICAL ERR: ${e.message}`)
+            };
+
+            const editor = createEditor(config);
+            editor.setRootElement(document.getElementById('lexical-editor'));
+
+            registerRichText(editor);
+            registerHistory(editor);
+            registerMarkdownShortcuts(editor, TRANSFORMERS);
+
+            window.setMarkdown = (md) => {
+                // Formatting checkboxes causes crash if node missing, and transformer is shared with List.
+                // So we must strip the checkbox formatting from the content.
+                md = md.replace(/- \[ \]/g, '- ').replace(/- \[x\]/g, '- ');
+
+                log(`MODULE: setMarkdown (${md.length} chars): ${md.substring(0, 50)}...`);
+
+                // Filter out transformers by Dependencies (Lists are crashing)
+                const SAFE_TRANSFORMERS = TRANSFORMERS.filter(t => {
+                    const deps = t.dependencies ? t.dependencies.map(d => d.getType ? d.getType() : d.name).join(',') : "";
+                    if (deps.includes("list")) return false;
+                    if (deps.includes("horizontal-rule")) return false;
+                    return true;
+                });
+
+                log(`MODULE: Filtered Transformers from ${TRANSFORMERS.length} to ${SAFE_TRANSFORMERS.length}`);
+
+                editor.update(() => {
+                    try {
+                        $convertFromMarkdownString(md, SAFE_TRANSFORMERS);
+                        log("MODULE: setMarkdown success");
+                    } catch (e) {
+                        log(`SET MD ERR: ${e.message}`);
+                    }
+                });
+            };
+
+            editor.registerUpdateListener(({ editorState }) => {
+                editorState.read(() => {
+                    if ($convertToMarkdownString) {
+                        const md = $convertToMarkdownString(TRANSFORMERS);
+                        if (window.webkit && window.webkit.messageHandlers.scribeBridge) {
+                            window.webkit.messageHandlers.scribeBridge.postMessage({
+                                type: 'UPDATE_CONTENT', content: md
+                            });
+                        }
+                    }
+                });
+            });
+
+            if (window.webkit && window.webkit.messageHandlers.scribeBridge) {
+                window.webkit.messageHandlers.scribeBridge.postMessage({ type: 'EDITOR_READY' });
+            }
+            log("BOOT: full");
+        } catch (e) {
+            log(`MODULE FATAL: ${e.message}`);
+            if (e.stack) log(e.stack);
+        }
+    </script>
+</body>
+
+</html>

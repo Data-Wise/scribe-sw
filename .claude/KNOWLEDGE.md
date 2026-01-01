@@ -241,27 +241,21 @@ scribe-sw/
 - [ ] Project sidebar
 - [ ] Note list
 
-### Core (v0.5)
-
-- [ ] Hybrid editor (TextKit + WebKit)
-- [ ] Live LaTeX rendering (MathJax)
-- [ ] Wiki links `[[note]]`
-- [ ] Tags `#tag`
-- [ ] Full-text search (FTS5)
-- [ ] Backlinks panel
-
 ### Polish (v1.0)
 
-- [ ] Editor tabs
-- [ ] Daily notes
-- [ ] Quick capture (⌘⇧C)
+- [x] Editor tabs
+- [x] CodeMirror 5 Hybrid engine
+- [x] Focus Mode (⌘⇧F)
+- [x] Daily notes
+- [x] Quick capture (⌘⇧C)
 - [ ] Global hotkey (⌘⇧N)
 - [ ] Menu bar integration
 - [ ] Themes
 
 ### Future (v2.0)
 
-- [ ] Citations `@cite`
+- [x] Citations `@cite` (BibTeX integration)
+- [x] E2E UI Tests (XCUITest)
 - [ ] Export (PDF, Word, LaTeX)
 - [ ] AI chat (Claude/Gemini CLI)
 - [ ] Spotlight indexing
@@ -315,13 +309,17 @@ git merge feature/database-manager
 - Architecture design (ARCHITECTURE.md)
 - Database schema (database-schema.md)
 - Models (Note, Project with Sendable + GRDB)
+- CodeMirror 5 integration (Unified Edit/Split)
+- Focus Mode (⌘⇧F)
+- Academic Citations (@cite) with BibTeX parser
+- E2E UI Testing Suite (XCUITest)
 - Documentation (7 comprehensive files)
 
 ### 🔄 In Progress
 
-- DatabaseManager actor
-- Service layer
-- Error types
+- Refinement of 'Native Plus' aesthetic
+- Migration of remaining Tauri features to Swift
+- FTS5 multi-project search refinement
 
 ### ⬜ To Do
 

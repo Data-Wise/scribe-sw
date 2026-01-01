@@ -35,16 +35,21 @@ struct RightSidebar: View {
             Divider()
             
             // Content
-            switch selectedTab {
-            case .backlinks:
-                BacklinksPanel(note: note)
-            case .tags:
-                TagsPanel(note: note)
-            case .properties:
-                PropertiesPanel(note: note)
+            Group {
+                switch selectedTab {
+                case .backlinks:
+                    BacklinksPanel(note: note)
+                case .tags:
+                    TagsPanel(note: note)
+                case .properties:
+                    PropertiesPanel(note: note)
+                }
             }
+            .transition(.opacity)
+            .id(selectedTab)
         }
         .frame(width: 300)
+        .animation(.easeInOut(duration: 0.2), value: selectedTab)
     }
 }
 
@@ -86,6 +91,7 @@ private struct TagsPanel: View {
                     .padding(.vertical, 8)
                 }
             }
+            Spacer()
         }
     }
 }
@@ -115,7 +121,7 @@ private struct TagRow: View {
     }
     
     private var tagCount: Int {
-        appState.notes.filter { $0.tags.contains(tag) }.count
+        appState.tagCounts[tag] ?? 0
     }
 }
 
@@ -124,9 +130,14 @@ private struct TagRow: View {
 private struct PropertiesPanel: View {
     let note: Note
     
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
+    
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 20) {
                 // Header
                 Label("Properties", systemImage: "list.bullet")
                     .font(.headline)
@@ -135,28 +146,34 @@ private struct PropertiesPanel: View {
                 
                 Divider()
                 
-                VStack(alignment: .leading, spacing: 12) {
-                    PropertyRow(label: "Created", value: note.date.formatted(date: .abbreviated, time: .shortened))
-                    PropertyRow(label: "Modified", value: note.modifiedDate.formatted(date: .abbreviated, time: .shortened))
-                    PropertyRow(label: "Folder", value: note.folder)
-                    PropertyRow(label: "Word Count", value: "\(note.wordCount)")
-                    PropertyRow(label: "Character Count", value: "\(note.content.count)")
-                    
-                    if note.isDaily {
-                        PropertyRow(label: "Type", value: "Daily Note")
+                // Essential Metadata Grid
+                LazyVGrid(columns: columns, spacing: 16) {
+                    PropertyCard(icon: "calendar", label: "Created", value: note.date.formatted(.dateTime.month().day().year().hour().minute()))
+                    PropertyCard(icon: "clock.arrow.2.circlepath", label: "Modified", value: note.modifiedDate.formatted(.dateTime.month().day().year().hour().minute()))
+                    PropertyCard(icon: "folder", label: "Folder", value: note.folder)
+                    PropertyCard(icon: "textformat", label: "Words", value: "\(note.wordCount)")
+                }
+                .padding(.horizontal, 16)
+                
+                if note.isDaily || note.isPinned {
+                    HStack(spacing: 8) {
+                        if note.isDaily {
+                            StatusBadge(text: "Daily Note", icon: "calendar.badge.clock", color: .blue)
+                        }
+                        if note.isPinned {
+                            StatusBadge(text: "Pinned", icon: "pin.fill", color: .orange)
+                        }
                     }
-                    
-                    if note.isPinned {
-                        PropertyRow(label: "Pinned", value: "Yes")
-                    }
-                    
-                    // Custom properties
-                    if let properties = note.metadata?.properties, !properties.isEmpty {
-                        Divider()
-                        
-                        Text("Custom Properties")
+                    .padding(.horizontal, 16)
+                }
+                
+                // Custom properties
+                if let properties = note.metadata?.properties, !properties.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Attributes")
                             .font(.caption.bold())
                             .foregroundColor(.secondary)
+                            .padding(.top, 8)
                         
                         ForEach(Array(properties.keys.sorted()), id: \.self) { key in
                             if let value = properties[key] {
@@ -164,11 +181,61 @@ private struct PropertiesPanel: View {
                             }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                    .background(Color.accentColor.opacity(0.03))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                
+                Spacer()
             }
+            .padding(.bottom, 20)
         }
+    }
+}
+
+private struct PropertyCard: View {
+    let icon: String
+    let label: String
+    let value: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 10))
+                Text(label)
+                    .font(.system(size: 10, weight: .semibold))
+            }
+            .foregroundColor(.secondary)
+            
+            Text(value)
+                .font(.system(size: 11))
+                .fontWeight(.medium)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color.accentColor.opacity(0.05))
+        .cornerRadius(8)
+        .accessibilityIdentifier(label)
+    }
+}
+
+private struct StatusBadge: View {
+    let text: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        Label(text, systemImage: icon)
+            .font(.system(size: 10, weight: .bold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(color.opacity(0.1))
+            .foregroundColor(color)
+            .cornerRadius(12)
     }
 }
 
@@ -177,17 +244,16 @@ private struct PropertyRow: View {
     let value: String
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .firstTextBaseline) {
             Text(label)
                 .font(.caption)
                 .foregroundColor(.secondary)
-                .frame(width: 100, alignment: .leading)
+                .frame(width: 80, alignment: .leading)
             
             Text(value)
                 .font(.caption)
                 .foregroundColor(.primary)
-            
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 }
@@ -201,6 +267,6 @@ private struct PropertyRow: View {
             properties: ["status": "in-progress", "priority": "high"]
         )
     ))
-    .environmentObject(AppState())
+    .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
     .frame(height: 600)
 }

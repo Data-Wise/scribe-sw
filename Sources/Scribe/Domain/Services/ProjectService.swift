@@ -3,15 +3,11 @@ import Foundation
 /// Service for project operations
 @MainActor
 final class ProjectService {
-    // MARK: - Singleton
-    
-    static let shared = ProjectService()
-    
     // MARK: - Dependencies
     
     private let database: DatabaseManager
     
-    init(database: DatabaseManager = .shared) {
+    init(database: DatabaseManager) {
         self.database = database
     }
     

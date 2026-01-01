@@ -100,6 +100,6 @@ private struct EditorTab: View {
 
 #Preview {
     EditorArea()
-        .environmentObject(AppState())
+        .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
         .frame(width: 800, height: 600)
 }

@@ -46,10 +46,11 @@ struct ContentView: View {
         .sheet(isPresented: $appState.showQuickCapture) {
             QuickCaptureView()
         }
-        .alert("Error", isPresented: .constant(appState.error != nil)) {
-            Button("OK") {
-                appState.error = nil
-            }
+        .alert("Error", isPresented: Binding(
+            get: { appState.error != nil },
+            set: { if !$0 { appState.error = nil } }
+        )) {
+            Button("OK") { appState.error = nil }
         } message: {
             if let error = appState.error {
                 Text(error.localizedDescription)
@@ -74,6 +75,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(AppState())
+        .environmentObject(AppState(noteService: NoteService(database: DatabaseManager.shared), projectService: ProjectService(database: DatabaseManager.shared)))
         .frame(width: 1200, height: 800)
 }

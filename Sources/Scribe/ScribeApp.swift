@@ -4,7 +4,20 @@ import SwiftUI
 /// Native SwiftUI version for macOS
 @main
 struct ScribeApp: App {
-    @StateObject private var appState = AppState()
+    @StateObject private var appState: AppState
+
+    init() {
+        // Initialize services
+        let database = DatabaseManager.shared
+        let noteService = NoteService(database: database)
+        let projectService = ProjectService(database: database)
+        
+        // Create AppState with injected dependencies
+        _appState = StateObject(wrappedValue: AppState(
+            noteService: noteService,
+            projectService: projectService
+        ))
+    }
 
     var body: some Scene {
         // Main window
