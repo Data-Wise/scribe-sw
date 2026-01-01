@@ -7,10 +7,10 @@ Tasks and next steps for the Scribe SwiftUI project.
 
 ---
 
-## CURRENT FOCUS: Phase 2.5 - Sidebar Polish ⭐
+## CURRENT FOCUS: Phase 2.5 - UI Polish ⭐
 
 **Timeline:** Week 2 (Jan 1-7, 2026)
-**Goal:** Professional sidebar interactions and Mission Control dashboard
+**Goal:** Professional sidebar interactions, Editor tabs, and Mission Control dashboard
 
 ### Completed ✅
 
