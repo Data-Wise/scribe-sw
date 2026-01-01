@@ -9,7 +9,7 @@ struct MainView: View {
         HStack(spacing: 0) {
             // Left sidebar (notes/projects) - ⌘[
             if appState.showSidebar {
-                LeftSidebarPlaceholder()
+                SidebarView()
                     .frame(width: ScribeLayout.sidebarWidth)
                     .transition(.move(edge: .leading))
             }
@@ -23,7 +23,7 @@ struct MainView: View {
             
             // Right sidebar (properties, outline, backlinks) - ⌘]
             if appState.showRightSidebar {
-                RightSidebarPlaceholder()
+                RightSidebarView()
                     .frame(width: ScribeLayout.sidebarWidth)
                     .transition(.move(edge: .trailing))
             }

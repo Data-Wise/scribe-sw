@@ -19,6 +19,7 @@ final class AppState: ObservableObject {
     
     @Published var showSidebar: Bool = false
     @Published var showRightSidebar: Bool = false
+    @Published var selectedProjectId: String?
     
     // MARK: - Error Dialog State
     
