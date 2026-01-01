@@ -25,8 +25,6 @@ struct ScribeApp: App {
             ContentView()
                 .environmentObject(appState)
         }
-        .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
         .defaultSize(width: 1200, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {
