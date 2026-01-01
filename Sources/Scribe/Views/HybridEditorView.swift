@@ -85,6 +85,7 @@ struct HybridEditorView: View {
                         WikiLinkAutocomplete(
                             suggestions: filteredSuggestions
                         )
+                        .environmentObject(appState)
                         .offset(x: 20, y: 20)
                     }
                     
@@ -130,13 +131,13 @@ struct HybridEditorView: View {
                 .keyboardShortcut("f", modifiers: [.command, .shift])
                 
                 Menu {
-                    Button("Bold", action: { insertMarkdown("**", "**") })
+                    Button("Bold", action: { insertMarkdown(prefix: "**", suffix: "**") })
                         .keyboardShortcut("b", modifiers: .command)
-                    Button("Italic", action: { insertMarkdown("*", "*") })
+                    Button("Italic", action: { insertMarkdown(prefix: "*", suffix: "*") })
                         .keyboardShortcut("i", modifiers: .command)
                     Divider()
-                    Button("Heading 1", action: { insertMarkdown("# ", "") })
-                    Button("Heading 2", action: { insertMarkdown("## ", "") })
+                    Button("Heading 1", action: { insertMarkdown(prefix: "# ", suffix: "") })
+                    Button("Heading 2", action: { insertMarkdown(prefix: "## ", suffix: "") })
                 } label: {
                     Image(systemName: "textformat")
                 }
@@ -238,21 +239,7 @@ struct HybridEditorView: View {
     }
     
     // MARK: - Supporting Types
-    
-    private struct WikiLinkSuggestion: Identifiable {
-        let id = UUID()
-        let title: String
-        let preview: String
-        let type: SuggestionType
-        let noteId: String
-        
-        enum SuggestionType {
-            case note
-            case project
-            case tag
-        }
-    }
-    
+
     private var filteredSuggestions: [WikiLinkSuggestion] {
         appState.notes.filter {
             $0.title.lowercased().contains(wikiLinkQuery.lowercased()) || wikiLinkQuery.isEmpty
@@ -260,21 +247,21 @@ struct HybridEditorView: View {
             WikiLinkSuggestion(title: note.title, preview: note.preview, type: .note, noteId: note.id)
         }
     }
-    
+
     private func insertTag(_ tag: String) {
         // Simple append for now, ideally replaces the #query
         content += tag.hasPrefix("#") ? String(tag.dropFirst()) : tag
         showTagAutocomplete = false
     }
-    
-    private func insertWikiLink(_ title: String) {
-        content += title + "]]"
-        showWikiLinkAutocomplete = false
-    }
-    
+
     private func insertCitation(_ key: String) {
         content += key
         showCitationAutocomplete = false
+    }
+
+    private func insertMarkdown(prefix: String, suffix: String) {
+        // Simple append for now
+        content += prefix + suffix
     }
 }
 
