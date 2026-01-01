@@ -4,13 +4,13 @@ priority: P1
 progress: 85
 version: 0.1.0-dev
 updated: 2026-01-01
-next: Phase 3 - Markdown preview and LaTeX rendering
+next: Phase 2.5 - Sidebar polish (context menus, drag-drop, inline editing)
 
-## Current Focus: Frontend Rebuild (Phases 1-2)
+## Current Focus: Phase 2.5 - Sidebar Polish
 
-**Goal:** Transform basic UI into ADHD-friendly Focus + Navigator modes
-**Timeline:** 2 weeks (Jan 1-14, 2026)
-**Approach:** Keep backend untouched, rebuild/enhance frontend
+**Goal:** Professional sidebar interactions and Mission Control dashboard
+**Timeline:** 3 days (Jan 8-10, 2026)
+**Approach:** Context menus, drag-drop, inline editing, visual polish
 
 **Phase 1 (Week 1):** ✅ COMPLETE
 - [x] Stats foundation (WritingStats model)
