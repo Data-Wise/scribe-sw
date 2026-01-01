@@ -10,14 +10,14 @@ final class AppState: ObservableObject {
     @Published var sidebarWidth: CGFloat = 260
 
     // MARK: - Navigation
-    @Published var selectedVaultId: UUID?
-    @Published var selectedPageId: UUID?
-    @Published var openTabs: [PageTab] = []
+    @Published var selectedProjectId: String?
+    @Published var selectedNoteId: String?
+    @Published var openTabs: [NoteTab] = []
     @Published var activeTabId: UUID?
 
     // MARK: - Data
-    @Published var vaults: [Vault] = []
-    @Published var pages: [Page] = []
+    @Published var projects: [Project] = []
+    @Published var notes: [Note] = []
 
     // MARK: - Services
     private let database: DatabaseService
@@ -29,56 +29,51 @@ final class AppState: ObservableObject {
 
     // MARK: - Actions
 
-    func createNewPage() {
-        let page = Page(
-            id: UUID(),
-            vaultId: selectedVaultId,
+    func createNewNote() {
+        let note = Note(
+            id: UUID().uuidString.lowercased(),
             title: "Untitled",
             content: "",
-            createdAt: Date(),
-            updatedAt: Date()
+            folder: "inbox",
+            projectId: selectedProjectId
         )
-        pages.append(page)
-        openPage(page)
+        notes.append(note)
+        openNote(note)
     }
 
     func openDailyNote() {
         let today = Calendar.current.startOfDay(for: Date())
-
+        
         // Find existing daily note
-        if let existing = pages.first(where: {
-            Calendar.current.isDate($0.createdAt, inSameDayAs: today) && $0.isDaily
-        }) {
-            openPage(existing)
-            return
-        }
-
-        // Create new daily note
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let title = formatter.string(from: today)
-
-        let page = Page(
-            id: UUID(),
-            vaultId: selectedVaultId,
+        
+        if let existing = notes.first(where: { $0.title == title && $0.folder == "daily" }) {
+            openNote(existing)
+            return
+        }
+        
+        // Create new daily note
+        let note = Note(
+            id: UUID().uuidString.lowercased(),
             title: title,
             content: "# \(title)\n\n",
-            createdAt: today,
-            updatedAt: today,
-            isDaily: true
+            folder: "daily",
+            projectId: selectedProjectId
         )
-        pages.append(page)
-        openPage(page)
+        notes.append(note)
+        openNote(note)
     }
 
-    func openPage(_ page: Page) {
+    func openNote(_ note: Note) {
         // Add to tabs if not already open
-        if !openTabs.contains(where: { $0.pageId == page.id }) {
-            let tab = PageTab(id: UUID(), pageId: page.id, isPinned: false)
+        if !openTabs.contains(where: { $0.noteId == note.id }) {
+            let tab = NoteTab(id: UUID(), noteId: note.id, isPinned: false)
             openTabs.append(tab)
         }
-        activeTabId = openTabs.first(where: { $0.pageId == page.id })?.id
-        selectedPageId = page.id
+        activeTabId = openTabs.first(where: { $0.noteId == note.id })?.id
+        selectedNoteId = note.id
     }
 
     func closeTab(_ tabId: UUID) {
@@ -93,18 +88,18 @@ final class AppState: ObservableObject {
         // Select adjacent tab if closing active
         if activeTabId == tabId {
             activeTabId = openTabs.last?.id
-            selectedPageId = openTabs.last.flatMap { tab in
-                pages.first(where: { $0.id == tab.pageId })?.id
+            selectedNoteId = openTabs.last.flatMap { tab in
+                notes.first(where: { $0.id == tab.noteId })?.id
             }
         }
     }
 
-    func savePage(_ page: Page) {
-        if let index = pages.firstIndex(where: { $0.id == page.id }) {
-            var updated = page
-            updated.updatedAt = Date()
-            pages[index] = updated
-            database.savePage(updated)
+    func saveNote(_ note: Note) {
+        if let index = notes.firstIndex(where: { $0.id == note.id }) {
+            var updated = note
+            updated.updatedAt = Int64(Date().timeIntervalSince1970)
+            notes[index] = updated
+            database.saveNote(updated)
         }
     }
 
@@ -112,16 +107,16 @@ final class AppState: ObservableObject {
 
     private func loadData() {
         Task {
-            vaults = await database.loadVaults()
-            pages = await database.loadPages()
+            projects = await database.loadProjects()
+            notes = await database.loadNotes()
         }
     }
 }
 
 // MARK: - Tab Model
 
-struct PageTab: Identifiable, Equatable {
+struct NoteTab: Identifiable, Equatable {
     let id: UUID
-    let pageId: UUID
+    let noteId: String
     var isPinned: Bool
 }
