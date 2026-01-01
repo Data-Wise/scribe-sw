@@ -17,13 +17,13 @@ struct ScribeApp: App {
         .defaultSize(width: 1200, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {
-                Button("New Page") {
-                    appState.createNewPage()
+                Button("New Note") {
+                    Task { await appState.createNewNote() }
                 }
                 .keyboardShortcut("n", modifiers: .command)
 
                 Button("Daily Note") {
-                    appState.openDailyNote()
+                    Task { await appState.openDailyNote() }
                 }
                 .keyboardShortcut("d", modifiers: .command)
 

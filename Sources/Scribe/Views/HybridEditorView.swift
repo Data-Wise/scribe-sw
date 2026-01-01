@@ -9,6 +9,7 @@ struct HybridEditorView: View {
     @State private var content: String
     @State private var title: String
     @State private var showPreview = true
+    @State private var showRightSidebar = true
     @State private var splitRatio: CGFloat = 0.5
     @FocusState private var isEditorFocused: Bool
     
@@ -19,33 +20,42 @@ struct HybridEditorView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Title bar
-            TitleBar(title: $title, note: note)
-            
-            Divider()
-            
-            // Editor content
-            GeometryReader { geometry in
-                if showPreview {
-                    // Split view: Source + Preview
-                    HSplitView {
+        HStack(spacing: 0) {
+            // Main editor
+            VStack(spacing: 0) {
+                // Title bar
+                TitleBar(title: $title, note: note)
+                
+                Divider()
+                
+                // Editor content
+                GeometryReader { geometry in
+                    if showPreview {
+                        // Split view: Source + Preview
+                        HSplitView {
+                            SourceEditor(content: $content, isEditorFocused: _isEditorFocused)
+                                .frame(minWidth: 300)
+                            
+                            MarkdownPreview(content: content)
+                                .frame(minWidth: 300)
+                        }
+                    } else {
+                        // Source only
                         SourceEditor(content: $content, isEditorFocused: _isEditorFocused)
-                            .frame(minWidth: 300)
-                        
-                        MarkdownPreview(content: content)
-                            .frame(minWidth: 300)
                     }
-                } else {
-                    // Source only
-                    SourceEditor(content: $content, isEditorFocused: _isEditorFocused)
                 }
+                
+                Divider()
+                
+                // Status bar
+                StatusBar(note: note, content: content, wordCount: wordCount)
             }
             
-            Divider()
-            
-            // Status bar
-            StatusBar(note: note, content: content, wordCount: wordCount)
+            // Right sidebar
+            if showRightSidebar {
+                Divider()
+                RightSidebar(note: note)
+            }
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
@@ -56,6 +66,14 @@ struct HybridEditorView: View {
                 }
                 .help("Toggle Preview (⌘P)")
                 .keyboardShortcut("p", modifiers: .command)
+                
+                Button {
+                    showRightSidebar.toggle()
+                } label: {
+                    Image(systemName: "sidebar.right")
+                }
+                .help("Toggle Sidebar (⌘⌥R)")
+                .keyboardShortcut("r", modifiers: [.command, .option])
                 
                 Menu {
                     Button("Bold", action: { insertMarkdown("**", "**") })
