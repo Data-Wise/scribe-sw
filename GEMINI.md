@@ -51,25 +51,31 @@
 Sources/Scribe/
 ├── ScribeApp.swift           # @main entry point
 ├── Data/
-│   └── DatabaseManager.swift # Actor-based GRDB (245 lines)
+│   └── DatabaseManager.swift # Actor-based GRDB
 ├── Domain/Services/
-│   ├── NoteService.swift     # Note CRUD (107 lines)
-│   └── ProjectService.swift  # Project CRUD (56 lines)
+│   ├── NoteService.swift     # Note CRUD
+│   └── ProjectService.swift  # Project CRUD
 ├── Models/
-│   ├── Note.swift            # Note model + GRDB (70 lines)
-│   ├── Project.swift         # Project + ProjectType (231 lines)
+│   ├── Note.swift            # Note model + GRDB
+│   ├── Project.swift         # Project + ProjectType
 │   ├── ScribeError.swift     # Error types
-│   └── WritingStats.swift    # Session/streak tracking (209 lines)
+│   └── WritingStats.swift    # Session/streak tracking
 ├── Store/
-│   └── AppState.swift        # UI state management (197 lines)
+│   └── AppState.swift        # UI state management
 └── Views/
-    ├── DesignSystem.swift    # Colors, fonts, spacing (92 lines)
-    ├── MainView.swift        # Root layout (51 lines)
-    ├── EditorView.swift      # Markdown editor (119 lines)
-    └── StatsFooter.swift     # 5-metric footer (147 lines)
+    ├── DesignSystem.swift    # Colors, fonts, spacing
+    ├── MainView.swift        # Root layout
+    ├── EditorView.swift      # Markdown editor
+    ├── StatsFooter.swift     # 5-metric footer
+    ├── ErrorDialog.swift     # Error/warning dialog
+    └── Sidebar/
+        ├── SidebarView.swift       # Left sidebar
+        ├── ProjectSection.swift    # Project list
+        ├── NoteRow.swift           # Note item
+        └── RightSidebarView.swift  # Properties/Outline/Backlinks
 ```
 
-**Total**: ~12 files, ~1,500 lines
+**Total**: ~20 files, ~2,500 lines
 
 ---
 
@@ -111,13 +117,15 @@ Sources/Scribe/
 - NoteService, ProjectService
 - Models with GRDB conformance
 
-**Frontend**: 40% complete 🚧
+**Frontend**: 85% complete ✅
 
 - DesignSystem ✅
 - Focus Mode layout ✅
 - WritingStats + StatsFooter ✅
-- Keyboard shortcuts ❌
-- Sidebar (Phase 2) ❌
+- Keyboard shortcuts ✅ (⌘N, ⌘[, ⌘])
+- Left/Right Sidebars ✅
+- Error Dialog ✅
+- 122 tests passing ✅
 
 ---
 
@@ -125,9 +133,9 @@ Sources/Scribe/
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 1 | Focus Mode + Stats | In Progress |
-| 2 | Sidebar + Navigation | Planned |
-| 3 | Markdown Preview | Deferred |
+| 1 | Focus Mode + Stats | ✅ Complete |
+| 2 | Sidebar + Navigation | ✅ Complete |
+| 3 | Markdown Preview | Next |
 | 4 | LaTeX Rendering | Deferred |
 
 ---

@@ -1,10 +1,10 @@
 project: scribe-sw
 status: active
 priority: P1
-progress: 70
+progress: 85
 version: 0.1.0-dev
 updated: 2026-01-01
-next: Test keyboard responsiveness in Xcode GUI → then add keyboard shortcuts (⌘N, ⌘B)
+next: Phase 3 - Markdown preview and LaTeX rendering
 
 ## Current Focus: Frontend Rebuild (Phases 1-2)
 
@@ -12,20 +12,22 @@ next: Test keyboard responsiveness in Xcode GUI → then add keyboard shortcuts 
 **Timeline:** 2 weeks (Jan 1-14, 2026)
 **Approach:** Keep backend untouched, rebuild/enhance frontend
 
-**Phase 1 (Week 1):**
+**Phase 1 (Week 1):** ✅ COMPLETE
 - [x] Stats foundation (WritingStats model)
 - [x] Enhanced stats footer (5 metrics: word, timer, streak, today, goal)
 - [x] Focus Mode layout (EditorView + StatsFooter)
-- [ ] Editor enhancements (markdown awareness)
-- [ ] Remove toolbar chrome (pure Focus Mode)
-- [ ] Keyboard shortcuts (⌘B, ⌘N, ⌘W)
+- [x] Keyboard shortcuts (⌘N, ⌘[, ⌘])
+- [x] Error dialog with auto-dismiss
 - [x] Session persistence (UserDefaults)
+- [x] 114 tests passing
 
-**Phase 2 (Week 2):**
-- [ ] Sidebar structure (SidebarView, ProjectSection, RecentSection)
-- [ ] Navigation logic (project filtering, note selection)
-- [ ] Search/filter implementation
-- [ ] Animations & polish (smooth transitions)
+**Phase 2 (Week 2):** ✅ COMPLETE
+- [x] Left sidebar (SidebarView, ProjectSection, NoteRow)
+- [x] Right sidebar (Properties, Outline, Backlinks)
+- [x] Note selection from sidebar
+- [x] Project filtering
+- [x] Sidebar animations
+- [x] 122 tests passing
 
 **Phase 3-4 (Deferred):**
 - Markdown preview (split view)
@@ -33,17 +35,20 @@ next: Test keyboard responsiveness in Xcode GUI → then add keyboard shortcuts 
 
 ## Current Version: 0.1.0-dev (Clean Rebuild)
 
-**Build Status:** ✅ Clean (0 warnings, 0 errors, 25s build time)
+**Build Status:** ✅ Clean (0 warnings, 0 errors)
 
-**Backend:** 100% complete (620 lines, modern Swift)
+**Backend:** 100% complete
 - DatabaseManager (Actor-based GRDB)
 - NoteService, ProjectService (async/await CRUD)
-- Models (Note, Project, ScribeError)
+- Models (Note, Project, WritingStats, ScribeError)
 - AppState (ObservableObject)
 
-**Frontend:** 40% complete (needs enhancement)
-- DesignSystem ✅ (matches vision)
-- Basic editor, stats, sidebar (need upgrade)
+**Frontend:** 85% complete
+- DesignSystem ✅
+- EditorView + StatsFooter ✅
+- Left/Right Sidebars ✅
+- Error Dialog ✅
+- 122 tests passing ✅
 
 **Distribution:**
 - Platform: macOS 14+ (Sonoma)
