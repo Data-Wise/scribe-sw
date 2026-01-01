@@ -33,7 +33,7 @@ struct HybridEditorView: View {
                     if showPreview {
                         // Split view: Source + Preview
                         HSplitView {
-                            SourceEditor(content: $content, isEditorFocused: _isEditorFocused)
+                            SourceEditor(content: $content, isEditorFocused: $isEditorFocused)
                                 .frame(minWidth: 300)
                             
                             MarkdownPreview(content: content)
@@ -41,7 +41,7 @@ struct HybridEditorView: View {
                         }
                     } else {
                         // Source only
-                        SourceEditor(content: $content, isEditorFocused: _isEditorFocused)
+                        SourceEditor(content: $content, isEditorFocused: $isEditorFocused)
                     }
                 }
                 

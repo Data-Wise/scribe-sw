@@ -61,9 +61,19 @@ struct QuickCaptureView: View {
     }
 
     private func saveCapture() {
+        guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        
         Task {
-            await appState.createNewNote()
-            dismiss()
+            do {
+                let note = try await appState.createQuickCaptureNote(
+                    title: title,
+                    content: content,
+                    projectId: selectedProjectId
+                )
+                dismiss()
+            } catch {
+                // Error handled by appState
+            }
         }
     }
 }

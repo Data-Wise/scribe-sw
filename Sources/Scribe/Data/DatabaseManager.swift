@@ -89,7 +89,6 @@ actor DatabaseManager {
             try db.create(index: "idx_notes_project", on: "notes", columns: ["project_id"])
             try db.create(index: "idx_notes_updated", on: "notes", columns: ["updated_at"])
             try db.create(index: "idx_notes_deleted", on: "notes", columns: ["deleted_at"])
-                where: sql("deleted_at IS NOT NULL")
         }
         
         // Migration v2: Links & Tags

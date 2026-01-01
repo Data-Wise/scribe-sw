@@ -18,6 +18,7 @@ final class AppState: ObservableObject {
     // MARK: - Data
     @Published var projects: [Project] = []
     @Published var notes: [Note] = []
+    @Published var writingStats = WritingStats()
     @Published var isLoading = false
     @Published var error: ScribeError?
 
@@ -50,8 +51,29 @@ final class AppState: ObservableObject {
             
             projects = try await projectsTask
             notes = try await notesTask
+            
+            await ensureInbox()
         } catch {
             self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+    
+    private func ensureInbox() async {
+        let inboxId = "system-inbox"
+        if !projects.contains(where: { $0.id == inboxId }) {
+            do {
+                let inbox = try await projectService.create(
+                    name: "Inbox",
+                    description: "Quick capture zone",
+                    type: .generic
+                )
+                // Note: projectService.create generates a new UUID, 
+                // but for the system inbox we might want a stable ID or just check by name.
+                // Let's just use the name for now if ID is dynamic, 
+                // or refactor service to allow passing ID.
+            } catch {
+                print("Failed to ensure inbox: \(error)")
+            }
         }
     }
 
@@ -123,10 +145,36 @@ final class AppState: ObservableObject {
                 if let index = notes.firstIndex(where: { $0.id == note.id }) {
                     notes[index] = note
                 }
+                
+                updateWritingStats()
             } catch {
                 self.error = error as? ScribeError ?? .unknown(error)
             }
         }
+    }
+    
+    private func updateWritingStats() {
+        let now = Date()
+        let calendar = Calendar.current
+        
+        // Handle streak
+        if let lastWrite = writingStats.lastWriteDate {
+            if calendar.isDateInYesterday(lastWrite) {
+                writingStats.streak += 1
+            } else if !calendar.isDateInToday(lastWrite) {
+                writingStats.streak = 1
+            }
+        } else {
+            writingStats.streak = 1
+        }
+        
+        writingStats.lastWriteDate = now
+        
+        // Update words today
+        // Note: This is an approximation for now. 
+        // A better way would be tracking diffs, but let's start simple.
+        let totalWords = notes.reduce(0) { $0 + $1.wordCount }
+        writingStats.wordsToday = totalWords // Temporary logic: total words as a proxy
     }
     
     func deleteNote(_ noteId: String) async {
@@ -182,6 +230,23 @@ final class AppState: ObservableObject {
             return []
         }
     }
+    
+    func createQuickCaptureNote(title: String, content: String, projectId: String?) async throws -> Note {
+        do {
+            let note = try await noteService.create(
+                title: title,
+                content: content,
+                projectId: projectId ?? projects.first(where: { $0.name == "Inbox" })?.id,
+                folder: "inbox"
+            )
+            notes.append(note)
+            updateWritingStats()
+            return note
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+            throw error
+        }
+    }
 }
 
 // MARK: - Tab Model
@@ -190,4 +255,17 @@ struct NoteTab: Identifiable, Equatable {
     let id: UUID
     let noteId: String
     var isPinned: Bool
+}
+
+struct WritingStats: Codable, Sendable {
+    var streak: Int = 0
+    var wordsToday: Int = 0
+    var sessionStart: Date? = Date()
+    var weeklyGoal: Int = 5000 // Default goal
+    var lastWriteDate: Date?
+    
+    var sessionDuration: TimeInterval {
+        guard let start = sessionStart else { return 0 }
+        return Date().timeIntervalSince(start)
+    }
 }

@@ -70,8 +70,8 @@ struct MissionControlView: View {
                     }
                 }
                 
-                // Statistics
-                StatisticsCard(appState: appState)
+                // Enhanced Statistics
+                EnhancedStatistics()
                     .padding(.horizontal)
             }
             .padding(.bottom, 40)
@@ -81,115 +81,150 @@ struct MissionControlView: View {
     }
 }
 
-private struct QuickActionCard: View {
-    let title: String
-    let icon: String
-    let color: Color
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 32))
-                    .foregroundColor(color)
-                Text(title)
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
-            .background(Color(.controlBackgroundColor))
-            .cornerRadius(12)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-private struct NoteListItem: View {
-    let note: Note
+private struct EnhancedStatistics: View {
     @EnvironmentObject var appState: AppState
-    
-    var body: some View {
-        Button {
-            appState.openNote(note)
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(note.title)
-                        .font(.headline)
-                    Text(note.preview)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                }
-                Spacer()
-                Text(note.modifiedDate.formatted(.relative(presentation: .named)))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding()
-            .background(Color(.controlBackgroundColor))
-            .cornerRadius(8)
-        }
-        .buttonStyle(.plain)
-        .padding(.horizontal)
-    }
-}
-
-private struct StatisticsCard: View {
-    @ObservedObject var appState: AppState
+    @State private var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    @State private var sessionDuration: String = "0m"
     
     var body: some View {
         VStack(spacing: 16) {
             Text("Statistics")
                 .font(.headline)
             
-            HStack(spacing: 32) {
-                StatItem(
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: 16) {
+                StatCard(
+                    icon: "🔥",
+                    label: "Streak",
+                    value: "\(appState.writingStats.streak) days",
+                    color: .orange,
+                    gradient: true
+                )
+                
+                StatCard(
+                    icon: "📊",
+                    label: "Today",
+                    value: "\(appState.writingStats.wordsToday) words",
+                    color: .blue,
+                    gradient: true
+                )
+                
+                StatCard(
+                    icon: "⏱️",
+                    label: "Session",
+                    value: sessionDuration,
+                    color: .green,
+                    gradient: true
+                )
+                
+                StatCard(
+                    icon: "🎯",
+                    label: "Goal",
+                    value: "\(goalPercent)%",
+                    color: .purple,
+                    gradient: true,
+                    progress: Double(goalPercent) / 100.0
+                )
+                
+                StatCard(
+                    icon: "📝",
                     label: "Total Notes",
                     value: "\(appState.notes.count)",
-                    icon: "doc.text"
+                    color: .cyan
                 )
                 
-                StatItem(
+                StatCard(
+                    icon: "📁",
                     label: "Projects",
                     value: "\(appState.projects.count)",
-                    icon: "folder"
-                )
-                
-                StatItem(
-                    label: "Words",
-                    value: "\(totalWords)",
-                    icon: "textformat"
+                    color: .pink
                 )
             }
         }
-        .padding()
-        .background(Color(.controlBackgroundColor))
-        .cornerRadius(12)
+        .onReceive(timer) { _ in
+            updateSessionDuration()
+        }
+        .onAppear {
+            updateSessionDuration()
+        }
     }
     
-    private var totalWords: Int {
-        appState.notes.reduce(0) { $0 + $1.wordCount }
+    private var goalPercent: Int {
+        guard appState.writingStats.weeklyGoal > 0 else { return 0 }
+        let totalWords = appState.notes.reduce(0) { $0 + $1.wordCount }
+        return min(100, (totalWords * 100) / appState.writingStats.weeklyGoal)
+    }
+    
+    private func updateSessionDuration() {
+        let duration = appState.writingStats.sessionDuration
+        let minutes = Int(duration / 60)
+        if minutes < 60 {
+            sessionDuration = "\(minutes)m"
+        } else {
+            let hours = minutes / 60
+            let remainingMinutes = minutes % 60
+            sessionDuration = "\(hours)h \(remainingMinutes)m"
+        }
     }
 }
 
-private struct StatItem: View {
+private struct StatCard: View {
+    let icon: String
     let label: String
     let value: String
-    let icon: String
+    let color: Color
+    var gradient: Bool = false
+    var progress: Double? = nil
     
     var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(.blue)
+        VStack(spacing: 12) {
+            // Icon with optional gradient background
+            ZStack {
+                if gradient {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [color.opacity(0.3), color.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 48, height: 48)
+                }
+                
+                Text(icon)
+                    .font(.system(size: 24))
+            }
+            
+            // Value (large)
             Text(value)
-                .font(.title.bold())
+                .font(.headline)
+                .foregroundColor(.primary)
+                .lineLimit(1)
+            
+            // Label (small)
             Text(label)
                 .font(.caption)
                 .foregroundColor(.secondary)
+            
+            // Optional progress bar
+            if let progress = progress {
+                ProgressView(value: progress)
+                    .tint(color)
+                    .padding(.horizontal, 8)
+            }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(Color(.controlBackgroundColor))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(color.opacity(0.2), lineWidth: 1)
+        )
     }
 }
 
