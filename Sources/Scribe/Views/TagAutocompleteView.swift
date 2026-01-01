@@ -9,16 +9,22 @@ struct TagAutocompleteView: View {
     var body: some View {
         if !tags.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(Array(tags.prefix(10).enumerated()), id: \.offset) { index, tag in
-                    Button {
-                        onSelect(tag)
-                    } label: {
-                        HStack {
-                            Text(tag)
-                                .font(.body)
+            ForEach(Array(tags.prefix(10).enumerated()), id: \.offset) { index, tag in
+                Button {
+                    onSelect(tag)
+                } label: {
+                    HStack {
+                        Text(tag)
+                            .font(.body)
                                 .foregroundColor(.primary)
-                            Spacer()
-                        }
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(index == selectedIndex ? Color.accentColor.opacity(0.1) : Color.clear)
+                .cornerRadius(6)
+            }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(index == selectedIndex ? Color.accentColor.opacity(0.1) : Color.clear)

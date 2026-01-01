@@ -82,9 +82,9 @@ struct HybridEditorView: View {
                     }
                     
                     if showWikiLinkAutocomplete {
-                        WikiLinkAutocomplete(suggestions: filteredSuggestions) { suggestion in
-                            insertWikiLink(suggestion.title)
-                        }
+                        WikiLinkAutocomplete(
+                            suggestions: filteredSuggestions
+                        )
                         .offset(x: 20, y: 20)
                     }
                     
@@ -209,8 +209,26 @@ struct HybridEditorView: View {
         appState.saveNote(updatedNote)
     }
     
-    private func insertMarkdown(_ prefix: String, _ suffix: String) {
-        content += prefix + suffix
+    private func insertWikiLink(_ title: String) {
+        // Find note by title
+        guard let note = appState.notes.first(where: { $0.title == title && !$0.isDeleted }) else {
+            return
+        }
+        
+        let link = "[[\(title)]](\(note.id))"
+        
+        // Append link at cursor position (simple append for now)
+        content += link
+        
+        // Trigger save
+        if let currentNote = appState.notes.first(where: { $0.id == note.id }) {
+            var updated = currentNote
+            updated.content = content
+            
+            Task {
+                await appState.saveNote(updated)
+            }
+        }
     }
     
     // Autocomplete Logic
@@ -219,10 +237,28 @@ struct HybridEditorView: View {
         appState.uniqueTags.filter { $0.lowercased().contains(tagQuery.lowercased()) || tagQuery.isEmpty }
     }
     
+    // MARK: - Supporting Types
+    
+    private struct WikiLinkSuggestion: Identifiable {
+        let id = UUID()
+        let title: String
+        let preview: String
+        let type: SuggestionType
+        let noteId: String
+        
+        enum SuggestionType {
+            case note
+            case project
+            case tag
+        }
+    }
+    
     private var filteredSuggestions: [WikiLinkSuggestion] {
-        appState.notes.filter { 
-            $0.title.lowercased().contains(wikiLinkQuery.lowercased()) || wikiLinkQuery.isEmpty 
-        }.map(WikiLinkSuggestion.init)
+        appState.notes.filter {
+            $0.title.lowercased().contains(wikiLinkQuery.lowercased()) || wikiLinkQuery.isEmpty
+        }.map { note in
+            WikiLinkSuggestion(title: note.title, preview: note.preview, type: .note, noteId: note.id)
+        }
     }
     
     private func insertTag(_ tag: String) {
