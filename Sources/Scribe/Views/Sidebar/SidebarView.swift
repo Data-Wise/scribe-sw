@@ -139,9 +139,10 @@ private struct UncategorizedSection: View {
                 guard let provider = providers.first else { return false }
                 
                 provider.loadObject(ofClass: NSString.self) { string, error in
-                    guard let noteId = string as? String else { return }
-                    Task { @MainActor in
-                        onMoveNote(noteId, "")
+                    if let noteId = string as? String {
+                        DispatchQueue.main.async {
+                            onMoveNote(noteId, "")
+                        }
                     }
                 }
                 return true

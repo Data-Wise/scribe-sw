@@ -7,10 +7,10 @@ Tasks and next steps for Scribe SwiftUI project.
 
 ---
 
-## CURRENT FOCUS: Phase 2.5 - UI Polish Complete ⭐
+## CURRENT FOCUS: Phase 2.5 - Drag-and-Drop Complete ⭐
 
 **Timeline:** Week 2 (Jan 8-10, 2026)
-**Goal:** Professional sidebar interactions and Editor area polish
+**Goal:** Professional sidebar interactions and drag-and-drop for notes
 
 ### Completed ✅
 
@@ -37,6 +37,15 @@ Tasks and next steps for Scribe SwiftUI project.
 
 - [x] Editor area polish (markdown-aware, improved title handling)
 - [x] Sidebar enhancements (context menus, drag-drop, inline editing)
+- [x] **Drag-and-drop for notes** (Session 2, Jan 1, 2026)
+  - [x] Add .onDrag to NoteRow for drag functionality
+  - [x] Add .onDrop to ProjectSection for drop targets
+  - [x] Add .onDrop to UncategorizedSection
+  - [x] Add moveNote method to AppState (async, uses NoteService)
+  - [x] Visual feedback: drop targets highlight with accent color
+  - [x] Skip moves if note already in target project
+  - [x] Support moving notes to/from Uncategorized section
+  - [x] All 141 tests passing
 
 **Phase 3 (Session 1):**
 
@@ -70,7 +79,7 @@ Tasks and next steps for Scribe SwiftUI project.
 
 ### Phase 4: Advanced Features (Future)
 
-- [ ] Left Sidebar enhancements (menus, drag-drop, inline edit)
+- [x] Left Sidebar enhancements (drag-drop) ✅ COMPLETE
 - [ ] **Editor Area Polish**
   - [ ] Implement Tab Bar with gradient accent
   - [ ] Add Pinned Mission Control tab (⌘1)

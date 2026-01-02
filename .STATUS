@@ -6,10 +6,10 @@ version: 0.1.0-dev
 updated: 2026-01-01
 next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 
-## Current Focus: Phase 2.5 - UI Polish Complete ⭐
+## Current Focus: Phase 2.5 - Drag-and-Drop Complete ⭐
 
-**Timeline:** Week 2-2.5 (Jan 8-10, 2026)
-**Goal:** Professional sidebar interactions and Editor area polish
+**Timeline:** Week 2-2.5 (Jan 1-7, 2026)
+**Goal:** Drag-and-drop functionality for moving notes between projects
 
 **Phase 1 (Week 1):** ✅ COMPLETE
 - [x] Stats foundation (WritingStats model)
@@ -36,6 +36,15 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 - [x] NoteRow simplified (prepared for future enhancements)
 - [x] Smooth animations (0.2s easing, hover states, selection highlighting)
 - [x] All features tested and working
+- [x] **Drag-and-drop for notes** (Session 2, Jan 1, 2026)
+  - [x] .onDrag modifier on NoteRow
+  - [x] .onDrop modifier on ProjectSection
+  - [x] .onDrop modifier on UncategorizedSection
+  - [x] moveNote method in AppState (async, uses NoteService)
+  - [x] Visual feedback (accent color on drop targets)
+  - [x] Skip moves if note already in target project
+  - [x] Support moving notes to/from Uncategorized section
+  - [x] All 141 tests passing
 
 **Phase 3 (Session 1 - Jan 1):** ✅ COMPLETE
 - [x] Test suite enhanced from 121 to 168 tests (+39%)
@@ -64,7 +73,7 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 - Models (Note, Project, WritingStats, ScribeError)
 - AppState (@MainActor ObservableObject)
 
-**Frontend:** 92% complete
+**Frontend:** 93% complete
 - ✅ DesignSystem (colors, fonts, spacing)
 - ✅ EditorView + StatsFooter (focus mode, auto-save)
 - ✅ Left/Right Sidebars (SidebarView, ProjectSection, NoteRow, RightSidebarView)
@@ -72,7 +81,8 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 - ✅ Keyboard shortcuts (⌘B, ⌘N, ⌘[, ⌘])
 - ✅ 168 tests passing (comprehensive coverage)
 - ✅ Context menus (notes, projects)
-- ✅ Drag-and-drop support
+- ✅ Drag-and-drop support (move notes between projects)
+- ✅ Visual feedback (accent color on drop targets)
 - ✅ Smooth animations (0.2s easing)
 - ⚠️ Tab bar (not yet - in REBUILD_PLAN as Phase 2.5)
 - ⚠️ Mission Control dashboard (not yet - Phase 4)
@@ -84,6 +94,18 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 - Edge cases (Unicode, special chars, concurrency, data integrity)
 
 **Recent Sessions:**
+
+### Jan 1, 2026 (Session 2) - Drag-and-Drop Complete
+- Implemented drag-and-drop for moving notes between projects
+- Added .onDrag to NoteRow for drag functionality
+- Added .onDrop to ProjectSection and UncategorizedSection
+- Added moveNote method to AppState (async, uses NoteService)
+- Visual feedback: drop targets highlight with accent color
+- Skip moves if note already in target project
+- Support moving notes to/from Uncategorized section
+- All 141 tests passing
+- Build: Clean (0 errors, 0 warnings, ~3s)
+- Documentation updated (TODO.md, .STATUS)
 
 ### Jan 1, 2026 (Session 1) - Phase 3 Complete
 - Enhanced test suite to 168 tests (+39%)
