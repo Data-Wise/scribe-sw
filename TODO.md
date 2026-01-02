@@ -7,10 +7,10 @@ Tasks and next steps for Scribe SwiftUI project.
 
 ---
 
-## CURRENT FOCUS: Phase 3 - Comprehensive Testing Complete ⭐
+## CURRENT FOCUS: Phase 2.5 - UI Polish Complete ⭐
 
-**Timeline:** Week 1 (Jan 1, 2026)
-**Goal:** Enhanced test coverage with edge cases, E2E workflows, and data integrity tests
+**Timeline:** Week 2 (Jan 8-10, 2026)
+**Goal:** Professional sidebar interactions and Editor area polish
 
 ### Completed ✅
 
@@ -24,27 +24,24 @@ Tasks and next steps for Scribe SwiftUI project.
 - [x] Session persistence
 - [x] 114 tests passing
 
-**Phase 2 (Week 1):**
+**Phase 2 (Week 1-2):**
 
 - [x] Left Sidebar (SidebarView, ProjectSection, NoteRow)
 - [x] Right Sidebar (Properties, Outline, Backlinks)
 - [x] Note selection from sidebar
 - [x] Project filtering
-- [x] Sidebar tests (122 total tests)
+- [x] Sidebar animations (150ms ease-in-out)
+- [x] 122 tests passing
 
-**Phase 3 (Session 1 - Today):**
+**Phase 2.5 (Week 2):**
+
+- [x] Editor area polish (markdown-aware, improved title handling)
+- [x] Sidebar enhancements (context menus, drag-drop, inline editing)
+
+**Phase 3 (Session 1):**
 
 - [x] Test suite enhanced from 121 to 168 tests (+39%)
 - [x] EdgeCaseTests.swift (47 new tests)
-  - Database persistence and empty operations
-  - Unicode support (Chinese, Spanish, French, emoji, math symbols)
-  - Very long content (10,000 words)
-  - Project type validation (all 5 types)
-  - Search edge cases (Unicode, case-insensitive)
-  - Writing stats edge cases (rapid changes, long sessions, daily resets)
-  - Error handling (all error types)
-  - Concurrent operations (simultaneous note creation)
-  - Data integrity (ID uniqueness)
 - [x] Enhanced WritingStatsTests (streak edge cases)
 - [x] Enhanced NoteModelTests (word count, timestamps, soft delete, Codable)
 - [x] Enhanced ProjectModelTests (computed properties, type properties)
@@ -54,15 +51,16 @@ Tasks and next steps for Scribe SwiftUI project.
 - [x] Fixed Resources reference in Package.swift
 - [x] Xcode project properly configured (both targets visible)
 - [x] Bundle identifier configured (com.datawise.Scribe)
-- [x] Build: Clean (0 errors, 0 warnings)
-- [x] All 168 tests passing (14.2s)
+- [x] Created TEST_COVERAGE_SUMMARY.md
+- [x] All 168 tests passing (0 failures)
+- [x] Build: Clean (0 errors, 0 warnings, ~14s)
+- [x] NoteRow simplified (removed complex context menu for cleaner implementation)
 
 **Critical Fixes:**
 
 - [x] Timer no longer steals keyboard focus
 - [x] App typing works correctly
 - [x] Session timer updates live without UI disruption
-- [x] Xcode project includes both Scribe and ScribeTests targets
 
 **See:** `docs/development/REBUILD_PLAN_2026.md` and `TEST_COVERAGE_SUMMARY.md` for full details
 

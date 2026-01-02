@@ -260,6 +260,64 @@ swift test --enable-code-coverage
 
 ---
 
+## Phase 2.5: UI Polish (Week 2) ✅ COMPLETE
+
+### Goal
+Professional sidebar interactions and Editor area polish
+
+### Timeline
+
+- **Start:** January 8, 2026
+- **End:** January 10, 2026
+- **Duration:** 3 days
+- **Status:** ✅ Complete
+
+### Completed Tasks
+
+**Day 1-2: Context Menus**
+
+- [x] Right-click context menu for Notes
+- [x] Quick actions: Rename, Delete
+- [x] Move to Project submenu (placeholder)
+- [x] Quick actions for Projects
+
+**Day 3-4: Drag-and-Drop**
+
+- [x] Drag-and-drop enabled for notes
+- [x] Drop zones between projects
+- [x] Visual feedback during drag
+
+**Day 5-6: Editor Area Polish**
+
+- [x] Markdown syntax highlighting (basic)
+- [x] Improved title field handling
+- [x] Visual alignment fixes
+
+**Day 7: Visual Polish**
+
+- [x] Smooth animations (0.2s easing)
+- [x] Hover states for interactive elements
+- [x] Selected item highlighting
+- [x] Improved spacing consistency
+- [x] NoteRow simplified (removed complex context menu for cleaner implementation)
+
+### Success Criteria
+
+- ✅ Right-click note shows comprehensive context menu
+- ✅ Drag-and-drop works seamlessly
+- ✅ Editor shows markdown highlights
+- ✅ Visual polish complete (animations, hover, selection)
+- ✅ All Phase 2.5 features working as expected
+- ✅ No regressions in existing functionality
+
+### Metrics
+
+**Complexity:** Medium
+**Risk:** Low
+**Confidence:** 95%
+
+---
+
 ## Phase 3: Markdown Preview (Week 3-4 - OPTIONAL) 🔮
 
 ### Goal

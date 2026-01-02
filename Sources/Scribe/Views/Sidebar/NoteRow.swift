@@ -5,7 +5,7 @@ struct NoteRow: View {
     let note: Note
     let isSelected: Bool
     let onSelect: () -> Void
-    
+
     var body: some View {
         Button(action: onSelect) {
             VStack(alignment: .leading, spacing: ScribeSpacing.xs) {
@@ -35,6 +35,42 @@ struct NoteRow: View {
             .cornerRadius(4)
         }
         .buttonStyle(.plain)
+    }
+}
+            }
+            .padding(.vertical, ScribeSpacing.xs)
+            .padding(.horizontal, ScribeSpacing.sm)
+            .background(isSelected ? ScribeColors.accent.opacity(0.15) : Color.clear)
+            .cornerRadius(4)
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            Button("Rename") {
+                showingRenameAlert = true
+                renameTitle = note.title
+            }
+            
+            Divider()
+
+            Button("Delete", role: .destructive) {
+                onDelete()
+            }
+
+            Divider()
+
+            Menu("Move to Project") {
+                // Projects will be passed from parent view
+            }
+        }
+        .alert("Rename Note", isPresented: $showingRenameAlert, actions: [
+            .textField(TextInput(title: "New Name", text: $renameTitle)),
+            .defaultButton("OK") {
+                if !renameTitle.trimmingCharacters(in: .whitespaces).isEmpty {
+                    onRename(renameTitle)
+                }
+            },
+            .cancelButton("Cancel")
+        ])
     }
 }
 
