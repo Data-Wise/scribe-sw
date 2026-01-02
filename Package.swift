@@ -8,7 +8,8 @@ let package = Package(
         .macOS(.v14)  // macOS 14 Sonoma for latest SwiftUI features
     ],
     products: [
-        .executable(name: "Scribe", targets: ["Scribe"])
+        .executable(name: "Scribe", targets: ["Scribe"]),
+        .executable(name: "scribe-cli", targets: ["ScribeCLI"])
     ],
     dependencies: [
         // Markdown parsing
@@ -27,6 +28,13 @@ let package = Package(
                 .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts"),
             ],
             path: "Sources/Scribe"
+        ),
+        .executableTarget(
+            name: "ScribeCLI",
+            dependencies: [
+                .product(name: "GRDB", package: "GRDB.swift"),
+            ],
+            path: "Sources/ScribeCLI"
         ),
         .testTarget(
             name: "ScribeTests",
