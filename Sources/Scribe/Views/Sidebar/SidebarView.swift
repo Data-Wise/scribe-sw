@@ -46,6 +46,11 @@ struct SidebarView: View {
                             },
                             onSelectProject: {
                                 appState.selectedProjectId = project.id
+                            },
+                            onMoveNote: { noteId, projectId in
+                                Task {
+                                    await appState.moveNote(noteId, toProjectId: projectId)
+                                }
                             }
                         )
                     }
@@ -57,6 +62,11 @@ struct SidebarView: View {
                             selectedNoteId: appState.selectedNoteId,
                             onSelectNote: { noteId in
                                 appState.selectedNoteId = noteId
+                            },
+                            onMoveNote: { noteId, _ in
+                                Task {
+                                    await appState.moveNote(noteId, toProjectId: nil)
+                                }
                             }
                         )
                     }
@@ -84,8 +94,10 @@ private struct UncategorizedSection: View {
     let notes: [Note]
     let selectedNoteId: String?
     let onSelectNote: (String) -> Void
+    let onMoveNote: (String, String) -> Void
     
     @State private var isExpanded = true
+    @State private var isDropTargeted = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -119,8 +131,21 @@ private struct UncategorizedSection: View {
                 }
                 .padding(.vertical, ScribeSpacing.xs)
                 .padding(.horizontal, ScribeSpacing.sm)
+                .background(isDropTargeted ? ScribeColors.accent.opacity(0.2) : Color.clear)
+                .cornerRadius(4)
             }
             .buttonStyle(.plain)
+            .onDrop(of: [.text], isTargeted: $isDropTargeted) { providers, location in
+                guard let provider = providers.first else { return false }
+                
+                provider.loadObject(ofClass: NSString.self) { string, error in
+                    guard let noteId = string as? String else { return }
+                    Task { @MainActor in
+                        onMoveNote(noteId, "")
+                    }
+                }
+                return true
+            }
             
             if isExpanded {
                 ForEach(notes) { note in

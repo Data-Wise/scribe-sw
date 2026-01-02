@@ -7,8 +7,10 @@ struct ProjectSection: View {
     let selectedNoteId: String?
     let onSelectNote: (String) -> Void
     let onSelectProject: () -> Void
+    let onMoveNote: (String, String) -> Void
     
     @State private var isExpanded = true
+    @State private var isDropTargeted = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -48,8 +50,21 @@ struct ProjectSection: View {
                 }
                 .padding(.vertical, ScribeSpacing.xs)
                 .padding(.horizontal, ScribeSpacing.sm)
+                .background(isDropTargeted ? ScribeColors.accent.opacity(0.2) : Color.clear)
+                .cornerRadius(4)
             }
             .buttonStyle(.plain)
+            .onDrop(of: [.text], isTargeted: $isDropTargeted) { providers, location in
+                guard let provider = providers.first else { return false }
+                
+                provider.loadObject(ofClass: NSString.self) { string, error in
+                    guard let noteId = string as? String else { return }
+                    Task { @MainActor in
+                        onMoveNote(noteId, project.id)
+                    }
+                }
+                return true
+            }
             
             // Notes list (collapsible)
             if isExpanded {
@@ -81,7 +96,8 @@ struct ProjectSection: View {
         notes: notes,
         selectedNoteId: notes[1].id,
         onSelectNote: { _ in },
-        onSelectProject: {}
+        onSelectProject: {},
+        onMoveNote: { _, _ in }
     )
     .padding()
     .background(ScribeColors.surface)

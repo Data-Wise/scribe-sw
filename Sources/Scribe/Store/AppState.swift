@@ -178,6 +178,30 @@ final class AppState: ObservableObject {
         }
     }
     
+    func moveNote(_ noteId: String, toProjectId: String?) async {
+        do {
+            var note = try await noteService.fetch(id: noteId)
+            
+            // Skip if note is already in target project
+            if note.projectId == toProjectId {
+                return
+            }
+            
+            // Update note's project (empty string means uncategorized)
+            note.projectId = toProjectId?.isEmpty ?? true ? nil : toProjectId
+            
+            // Save to database
+            try await noteService.save(note)
+            
+            // Update local state
+            if let index = notes.firstIndex(where: { $0.id == noteId }) {
+                notes[index] = note
+            }
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+    
     // MARK: - Project Actions
     
     func createProject(name: String, type: ProjectType) async {
