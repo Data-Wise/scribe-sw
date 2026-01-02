@@ -26,8 +26,7 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts"),
             ],
-            path: "Sources/Scribe",
-            resources: [.process("Resources")]
+            path: "Sources/Scribe"
         ),
         .testTarget(
             name: "ScribeTests",
