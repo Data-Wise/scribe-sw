@@ -52,6 +52,9 @@ func executeCommand(_ command: String, args: [String]) async throws {
         
     case "stats":
         try await StatsCommands.printStats(noteService, projectService)
+    
+    case "vault":
+        try await executeVaultCommand(args: args)
         
     case "help", "--help", "-h":
         HelpCommands.printUsage()
@@ -60,6 +63,53 @@ func executeCommand(_ command: String, args: [String]) async throws {
         print("❌ Unknown command: \(command)")
         HelpCommands.printUsage()
         exit(1)
+    }
+}
+
+@MainActor
+func executeVaultCommand(args: [String]) async throws {
+    guard let subcommand = args.first else {
+        print("❌ Usage: scribe-cli vault <command>")
+        print("   Commands: create, list, switch, context, info, delete")
+        return
+    }
+    
+    let subcommandArgs = Array(args.dropFirst())
+    
+    switch subcommand {
+    case "create":
+        let name = subcommandArgs.first ?? "default"
+        let path = subcommandArgs.count > 1 ? subcommandArgs[1] : nil
+        let type = subcommandArgs.count > 2 ? subcommandArgs[2] : nil
+        try await VaultCommands.create(name: name, path: path, type: type)
+        
+    case "list", "ls":
+        try await VaultCommands.list()
+        
+    case "switch":
+        guard let name = subcommandArgs.first else {
+            print("❌ Usage: scribe-cli vault switch <name>")
+            return
+        }
+        try await VaultCommands.switchVault(to: name)
+        
+    case "context":
+        try await VaultCommands.showContext()
+        
+    case "info":
+        let name = subcommandArgs.first
+        try await VaultCommands.info(name: name)
+        
+    case "delete", "rm":
+        guard let name = subcommandArgs.first else {
+            print("❌ Usage: scribe-cli vault delete <name>")
+            return
+        }
+        try await VaultCommands.delete(name: name)
+        
+    default:
+        print("❌ Unknown vault command: \(subcommand)")
+        print("   Valid commands: create, list, switch, context, info, delete")
     }
 }
 
