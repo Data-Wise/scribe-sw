@@ -1,15 +1,23 @@
 project: scribe-sw
-status: active
-priority: P1
-progress: 92
+status: blocked
+priority: P0 (CRITICAL)
+progress: 93
 version: 0.1.0-dev
 updated: 2026-01-01
-next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
+next: DEBUG - Resolve app hanging issue
 
-## Current Focus: Phase 2.5 - Drag-and-Drop Complete ⭐
+## Current Focus: 🚨 DEBUG - App Hanging Issue
 
-**Timeline:** Week 2-2.5 (Jan 1-7, 2026)
-**Goal:** Drag-and-drop functionality for moving notes between projects
+**Timeline:** Session on January 1, 2026
+**Goal:** Resolve app hanging on startup
+
+**Critical Issue:**
+- App hangs immediately on startup
+- Keyboard shortcuts don't work (⌘N, ⌘[, ⌘])
+- Window appears but becomes unresponsive
+- Cannot test any features
+
+**Drag-and-Drop Implementation:** ✅ COMPLETE (but untested)
 
 **Phase 1 (Week 1):** ✅ COMPLETE
 - [x] Stats foundation (WritingStats model)
@@ -95,7 +103,7 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 
 **Recent Sessions:**
 
-### Jan 1, 2026 (Session 2) - Drag-and-Drop Complete
+### Jan 1, 2026 (Session 2) - Drag-and-Drop Implemented (BLOCKED)
 - Implemented drag-and-drop for moving notes between projects
 - Added .onDrag to NoteRow for drag functionality
 - Added .onDrop to ProjectSection and UncategorizedSection
@@ -103,9 +111,13 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 - Visual feedback: drop targets highlight with accent color
 - Skip moves if note already in target project
 - Support moving notes to/from Uncategorized section
-- All 141 tests passing
-- Build: Clean (0 errors, 0 warnings, ~3s)
-- Documentation updated (TODO.md, .STATUS)
+- **CRITICAL:** App hangs immediately on startup
+- Keyboard shortcuts don't work (⌘N, ⌘[, ⌘])
+- Cannot test any features due to hang
+- 7 debugging attempts made, all failed
+- Created DEBUG_APP_HANG.md with full analysis
+- Created SESSION_SUMMARY.md with complete timeline
+- **Requires:** User feedback to proceed
 
 ### Jan 1, 2026 (Session 1) - Phase 3 Complete
 - Enhanced test suite to 168 tests (+39%)
@@ -174,6 +186,8 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 ## Key Files:
 | File | Purpose |
 |------|---------|
+| DEBUG_APP_HANG.md | 🚨 Critical issue debugging log (NEW) |
+| SESSION_SUMMARY.md | Complete session documentation (NEW) |
 | docs/development/REBUILD_PLAN_2026.md | Master implementation plan |
 | docs/PRODUCT_REQUIREMENTS.md | Vision document |
 | docs/UI_REDESIGN_BRAINSTORM.md | UI/UX specifications |
@@ -194,6 +208,13 @@ next: Phase 4 - Advanced Features or Phase 2.5 - Tab Bar
 - Related: Tauri version at ~/projects/dev-tools/scribe/
 
 ## Known Issues:
+- 🚨 **CRITICAL:** App hangs on startup (BLOCKING)
+  - Window appears but freezes immediately
+  - Keyboard shortcuts don't work
+  - Cannot type or interact with UI
+  - Root cause: Unknown (7 debugging attempts failed)
+  - See: DEBUG_APP_HANG.md for full analysis
+  - Requires: User feedback on system specs and console output
 - ⚠️ Tab bar not yet implemented (in REBUILD_PLAN as Phase 2.5)
 - ⚠️ Mission Control dashboard not yet implemented (Phase 4)
 - ⚠️ Markdown preview deferred (Phase 3)
