@@ -69,17 +69,6 @@ final class AppStateTests: XCTestCase {
         XCTAssertEqual(appState.writingStats.todayWordCount, 0, "Today word count should start at 0")
     }
     
-    @MainActor
-    func testSessionTimerTickIncrementsOverTime() async {
-        let appState = createAppState()
-        let initialTick = appState.sessionTimerTick
-        
-        // Wait for timer to tick (timer fires every 1 second)
-        try? await Task.sleep(nanoseconds: 1_500_000_000)
-        
-        XCTAssertGreaterThan(appState.sessionTimerTick, initialTick, "Timer tick should increment")
-    }
-    
     // MARK: - Helpers
     
     @MainActor

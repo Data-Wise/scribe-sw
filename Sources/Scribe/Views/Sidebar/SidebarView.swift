@@ -135,18 +135,18 @@ private struct UncategorizedSection: View {
                 .cornerRadius(4)
             }
             .buttonStyle(.plain)
-            .onDrop(of: [.text], isTargeted: $isDropTargeted) { providers, location in
-                guard let provider = providers.first else { return false }
-                
-                provider.loadObject(ofClass: NSString.self) { string, error in
-                    if let noteId = string as? String {
-                        DispatchQueue.main.async {
-                            onMoveNote(noteId, "")
-                        }
-                    }
-                }
-                return true
-            }
+            // .onDrop(of: [.text], isTargeted: $isDropTargeted) { providers, location in
+            //     guard let provider = providers.first else { return false }
+            //     
+            //     provider.loadObject(ofClass: NSString.self) { string, error in
+            //         if let noteId = string as? String {
+            //             DispatchQueue.main.async {
+            //                 onMoveNote(noteId, "")
+            //             }
+            //         }
+            //     }
+            //     return true
+            // }
             
             if isExpanded {
                 ForEach(notes) { note in

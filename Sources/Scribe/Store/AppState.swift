@@ -36,16 +36,8 @@ final class AppState: ObservableObject {
 
     @Published var writingStats: WritingStats
     
-    /// Tick counter for session timer - incrementing this triggers UI update for timer only
-    /// Using a dedicated published property avoids calling objectWillChange.send() 
-    /// which was causing the entire view to re-render and steal keyboard focus
-    @Published private(set) var sessionTimerTick: Int = 0
-
     /// Tracks previous word count for calculating words added
     private var previousWordCount: Int = 0
-
-    /// Timer for updating session duration display
-    private var sessionTimer: AnyCancellable?
 
     // MARK: - Services
 
@@ -62,29 +54,9 @@ final class AppState: ObservableObject {
         self.writingStats = WritingStats.load()
         writingStats.startNewSession()
 
-        // Start session timer (updates every second for live display)
-        startSessionTimer()
-
         Task {
             await loadData()
         }
-    }
-
-    deinit {
-        sessionTimer?.cancel()
-    }
-
-    // MARK: - Session Timer
-
-    private func startSessionTimer() {
-        sessionTimer = Timer.publish(every: 1.0, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                // Increment tick counter to trigger UI update for timer display only
-                // This is more targeted than objectWillChange.send() which was 
-                // causing the entire view hierarchy to re-render and steal keyboard focus
-                self?.sessionTimerTick += 1
-            }
     }
     
     // MARK: - Data Loading

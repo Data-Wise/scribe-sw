@@ -35,9 +35,9 @@ struct NoteRow: View {
             .cornerRadius(4)
         }
         .buttonStyle(.plain)
-        .onDrag {
-            NSItemProvider(object: note.id as NSString)
-        }
+        // .onDrag {
+        //     NSItemProvider(object: note.id as NSString)
+        // }
     }
 }
 
