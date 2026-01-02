@@ -34,8 +34,14 @@ struct MainView: View {
             minHeight: ScribeLayout.minWindowHeight
         )
         .onAppear {
-            if appState.notes.isEmpty {
-                Task {
+            Task {
+                // Load data on first appearance
+                if appState.projects.isEmpty {
+                    await appState.loadData()
+                }
+                
+                // Create initial note if empty
+                if appState.notes.isEmpty {
                     await appState.createNewNote()
                 }
             }

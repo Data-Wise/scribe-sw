@@ -15,8 +15,10 @@ actor DatabaseManager {
     // MARK: - Initialization
     
     private init() {
+        print("[DatabaseManager] Starting initialization...")
         do {
             // Setup database directory
+            print("[DatabaseManager] Setting up app directory...")
             let fileManager = FileManager.default
             let appSupport = try fileManager.url(
                 for: .applicationSupportDirectory,
@@ -26,18 +28,22 @@ actor DatabaseManager {
             )
             
             let dbDirectory = appSupport.appendingPathComponent("Scribe")
+            print("[DatabaseManager] Creating database directory: \(dbDirectory.path)")
             try fileManager.createDirectory(at: dbDirectory, withIntermediateDirectories: true)
             
             let dbPath = dbDirectory.appendingPathComponent("scribe.sqlite")
             
             // Create database queue
+            print("[DatabaseManager] Creating database queue...")
             self.dbQueue = try DatabaseQueue(path: dbPath.path)
             
             // Run migrations
+            print("[DatabaseManager] Running migrations...")
             try Self.runMigrations(dbQueue)
             
             print("[DB] Initialized at: \(dbPath.path)")
         } catch {
+            print("[DatabaseManager] FATAL ERROR: \(error)")
             fatalError("Failed to initialize database: \(error)")
         }
     }

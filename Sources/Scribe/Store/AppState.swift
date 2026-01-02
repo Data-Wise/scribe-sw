@@ -47,16 +47,19 @@ final class AppState: ObservableObject {
     // MARK: - Initialization
 
     init(noteService: NoteService, projectService: ProjectService) {
+        print("[AppState] Starting initialization...")
         self.noteService = noteService
         self.projectService = projectService
 
+        print("[AppState] Loading persisted stats...")
         // Load persisted stats
         self.writingStats = WritingStats.load()
+        print("[AppState] Stats loaded, starting new session...")
         writingStats.startNewSession()
+        print("[AppState] Session started, initialization complete")
 
-        Task {
-            await loadData()
-        }
+        // Don't load data in init - wait for view to appear
+        // This prevents potential deadlocks during initialization
     }
     
     // MARK: - Data Loading

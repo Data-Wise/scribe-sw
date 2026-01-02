@@ -1,7 +1,6 @@
 import Foundation
 
 /// Clean note service - simple CRUD operations
-@MainActor
 final class NoteService {
     private let database: DatabaseManager
     

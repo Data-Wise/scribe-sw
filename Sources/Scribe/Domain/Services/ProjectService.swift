@@ -1,7 +1,6 @@
 import Foundation
 
 /// Clean project service - simple CRUD operations
-@MainActor
 final class ProjectService {
     private let database: DatabaseManager
     
