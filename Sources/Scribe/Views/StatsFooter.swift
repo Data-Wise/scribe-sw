@@ -4,7 +4,6 @@ import SwiftUI
 /// Format: 📝234w · ⏱12m · 🔥7d · ⚡15 · 🎯50%
 struct StatsFooter: View {
     @EnvironmentObject var appState: AppState
-    @State private var currentTime = Date()
 
     var body: some View {
         HStack(spacing: ScribeSpacing.md) {
@@ -20,13 +19,11 @@ struct StatsFooter: View {
                 .background(ScribeColors.border)
 
             // Session timer
-            // Using hidden Text with currentTime triggers refresh without full view re-render
             StatItem(
                 icon: "clock",
                 value: appState.writingStats.sessionDurationFormatted,
                 color: ScribeColors.accent
             )
-            .overlay(Text("\(currentTime.timeIntervalSince1970)").hidden())
 
             Divider()
                 .frame(height: 12)
@@ -60,9 +57,6 @@ struct StatsFooter: View {
         .padding(.horizontal, ScribeSpacing.md)
         .frame(height: ScribeLayout.statsFooterHeight)
         .background(ScribeColors.surface)
-        .onReceive(Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()) { _ in
-            currentTime = Date()
-        }
     }
 
     // Current note word count
