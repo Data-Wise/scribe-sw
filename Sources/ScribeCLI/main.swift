@@ -47,14 +47,20 @@ func executeCommand(_ command: String, args: [String]) async throws {
     case "search":
         try await SearchCommands.search(noteService, args: args)
         
-    case "projects":
-        try await ProjectCommands.list(projectService)
+    case "projects", "project":
+        try await executeProjectCommand(projectService, args: args)
         
     case "stats":
         try await StatsCommands.printStats(noteService, projectService)
     
     case "vault":
         try await executeVaultCommand(args: args)
+        
+    case "inbox":
+        try await executeInboxCommand(noteService, projectService, args: args)
+        
+    case "quick":
+        try await InboxCommands.quick(noteService, args: args)
         
     case "help", "--help", "-h":
         HelpCommands.printUsage()
@@ -110,6 +116,46 @@ func executeVaultCommand(args: [String]) async throws {
     default:
         print("❌ Unknown vault command: \(subcommand)")
         print("   Valid commands: create, list, switch, context, info, delete")
+    }
+}
+
+@MainActor
+func executeProjectCommand(_ projectService: ProjectService, args: [String]) async throws {
+    guard let subcommand = args.first else {
+        try await ProjectCommands.list(projectService)
+        return
+    }
+    
+    let subcommandArgs = Array(args.dropFirst())
+    
+    switch subcommand {
+    case "list", "ls":
+        try await ProjectCommands.list(projectService)
+    case "create":
+        try await ProjectCommands.create(projectService, args: subcommandArgs)
+    default:
+        print("❌ Unknown project subcommand: \(subcommand)")
+        print("   Valid subcommands: list, create")
+    }
+}
+
+@MainActor
+func executeInboxCommand(_ noteService: NoteService, _ projectService: ProjectService, args: [String]) async throws {
+    guard let subcommand = args.first else {
+        try await InboxCommands.list(noteService)
+        return
+    }
+    
+    let subcommandArgs = Array(args.dropFirst())
+    
+    switch subcommand {
+    case "list", "ls":
+        try await InboxCommands.list(noteService)
+    case "move", "mv":
+        try await InboxCommands.move(noteService, projectService: projectService, args: subcommandArgs)
+    default:
+        print("❌ Unknown inbox subcommand: \(subcommand)")
+        print("   Valid subcommands: list, move")
     }
 }
 

@@ -17,8 +17,11 @@ enum HelpCommands {
           show <id>            Display note content
           delete <id>          Delete a note
           search <query>       Full-text search (FTS5)
-          projects             List all projects
+          project [cmd]        Project management (list, create)
           stats                Show statistics
+          vault <cmd>          Vault management (create, list, switch, context, ...)
+          inbox [cmd]          Inbox management (list, move)
+          quick <content>      Quick capture note to inbox
           help                 Show this message
         
         EDITOR:
