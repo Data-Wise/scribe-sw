@@ -10,7 +10,7 @@
 
 - **Goal**: Zero-friction writing for researchers and ADHD users
 - **Philosophy**: Minimal cognitive load, maximal focus
-- **Version**: 0.1.0-dev (Active Rebuild)
+- **Version**: 0.2.0-cli (CLI Development Focus)
 - **Platform**: macOS 14+ (Sonoma)
 
 ---
@@ -25,51 +25,106 @@
 
 ---
 
-## 🏗️ Architecture
+## 🚀 Current Status: CLI-First Development
+
+**Strategic Pivot:** Due to persistent SwiftUI input focus issues, development has shifted to **CLI-first** approach to build a robust backend.
+
+### Phase 0: Hybrid Config System ✅ COMPLETE (Jan 2, 2026)
+
+**Delivered:**
+
+- Multi-vault infrastructure
+- Hybrid config (vault.json + cli.json)
+- 6 vault commands (create, list, switch, context, info, delete)
+- Context-aware command routing
+- Comprehensive testing (unit + E2E)
+- User guide (VAULT_GUIDE.md)
+
+**Architecture:**
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      SwiftUI Views                       │
-│  MainView → EditorView + StatsFooter                    │
-├─────────────────────────────────────────────────────────┤
-│                    AppState (@MainActor)                 │
-│  @Published: notes, projects, selectedNoteId, stats     │
-├─────────────────────────────────────────────────────────┤
-│                      Services Layer                      │
-│  NoteService, ProjectService (async/await CRUD)         │
-├─────────────────────────────────────────────────────────┤
-│                   DatabaseManager (Actor)                │
-│  GRDB wrapper, thread-safe, SQLite + FTS5               │
-└─────────────────────────────────────────────────────────┘
+~/.config/scribe/.scribe-cli/
+├── config.json                 # Global config
+└── vaults/
+    └── {name}-cli.sqlite       # Per-vault databases
+
+{vault-root}/.scribe/
+├── vault.json                  # Shared (CLI + GUI)
+└── cli.json                    # CLI-specific
 ```
+
+### Phase 1: Inbox & Projects ✅ COMPLETE (Jan 5, 2026)
+
+**Delivered:**
+
+- Quick capture (`scribe-cli quick <content>`)
+- Inbox management (`scribe-cli inbox [list|move]`)
+- Project creation (`scribe-cli project create <name> [type]`)
+- Enhanced project list (IDs + emojis)
+- Partial ID matching
+- 34 unit tests + 21 E2E tests
+- Dogfooding test (real-world workflow)
+
+### Next: Phase 2 - Tags & Search (Week 3)
+
+---
+
+## 🏗️ Architecture
+
+### Backend (Solid ✅)
+
+```
+DatabaseManager (Actor)
+  ↓
+Services (NoteService, ProjectService)
+  ↓
+Models (Note, Project, WritingStats)
+```
+
+### CLI (Active Development 🚧)
+
+```
+main.swift → CommandRouter
+  ↓
+Commands/
+  ├── NoteCommands
+  ├── VaultCommands
+  ├── ProjectCommands
+  └── SearchCommands
+  ↓
+Services → DatabaseManager
+```
+
+### SwiftUI Frontend (Deferred ⏸️)
+
+- Critical issue: Input focus loss
+- Deferred until CLI backend complete
 
 ---
 
 ## 📁 Source Structure
 
 ```
-Sources/Scribe/
-├── ScribeApp.swift           # @main entry point
-├── Data/
-│   └── DatabaseManager.swift # Actor-based GRDB (245 lines)
-├── Domain/Services/
-│   ├── NoteService.swift     # Note CRUD (107 lines)
-│   └── ProjectService.swift  # Project CRUD (56 lines)
-├── Models/
-│   ├── Note.swift            # Note model + GRDB (70 lines)
-│   ├── Project.swift         # Project + ProjectType (231 lines)
-│   ├── ScribeError.swift     # Error types
-│   └── WritingStats.swift    # Session/streak tracking (209 lines)
-├── Store/
-│   └── AppState.swift        # UI state management (197 lines)
-└── Views/
-    ├── DesignSystem.swift    # Colors, fonts, spacing (92 lines)
-    ├── MainView.swift        # Root layout (51 lines)
-    ├── EditorView.swift      # Markdown editor (119 lines)
-    └── StatsFooter.swift     # 5-metric footer (147 lines)
-```
+Sources/
+├── Scribe/                     # SwiftUI app (deferred)
+│   ├── Data/DatabaseManager
+│   ├── Domain/Services/
+│   ├── Models/
+│   ├── Store/AppState
+│   └── Views/
+└── ScribeCLI/                  # CLI (active)
+    ├── Commands/               # 6 command modules
+    ├── Config/                 # Phase 0 ✅
+    ├── Utils/
+    ├── Data/                   # Shared backend
+    ├── Models/
+    └── Services/
 
-**Total**: ~12 files, ~1,500 lines
+Tests/
+├── ScribeTests/                # SwiftUI tests (114 passing)
+├── ScribeCLITests/             # CLI unit tests
+└── test-phase-0-e2e.sh         # E2E tests
+```
 
 ---
 
@@ -77,47 +132,55 @@ Sources/Scribe/
 
 | Layer | Technology |
 |-------|------------|
-| **UI** | SwiftUI (macOS 14+) |
+| **CLI** | Swift (main focus) |
+| **UI** | SwiftUI (deferred) |
 | **Database** | GRDB 6.24+ (SQLite + FTS5) |
 | **Markdown** | swift-markdown |
-| **Shortcuts** | KeyboardShortcuts |
-| **Concurrency** | async/await, Actors, Sendable |
+| **Editor** | Micro (CLI integration) |
+| **Shortcuts** | KeyboardShortcuts (GUI) |
 
 ---
 
-## 🎨 Design System
+## 🎨 Multi-Vault System
 
-**Colors** (VSCode Dark):
+**Vaults** = Independent workspaces
 
-- `background`: #1e1e1e
-- `surface`: #252526
-- `textPrimary`: #d4d4d4
-- `accent`: #007acc
-- `streak`: #ff6b35
+- **teaching** - Course materials
+- **research** - Papers, experiments
+- **r-pkg** - R package dev
+- **dev** - Code notes
 
-**Typography**:
+Each vault has:
 
-- Editor: SF Mono 16pt
-- Title: System 24pt bold
-- Stats: Rounded 12pt medium
+- Own database
+- Own projects + inbox
+- Independent settings
+- No cross-vault linking
+
+**Commands:**
+
+```bash
+scribe-cli vault create teaching ~/Documents/teaching teaching
+scribe-cli vault list
+scribe-cli vault switch research
+scribe-cli vault context
+```
 
 ---
 
-## 📊 Current Status
+## 📊 Project Status
 
-**Backend**: 100% complete ✅
+**Phase 0:** ✅ Complete (Jan 2, 2026)
+**Phase 1:** ✅ Complete (Jan 5, 2026)  
+**Progress:** 60% backend, 0% GUI
+**Build:** ✅ Clean (5.28s)
+**Tests:** ✅ 55 tests passing (34 unit + 21 E2E)
 
-- DatabaseManager (Actor, GRDB, FTS5)
-- NoteService, ProjectService
-- Models with GRDB conformance
+**Git Workflow:**
 
-**Frontend**: 40% complete 🚧
-
-- DesignSystem ✅
-- Focus Mode layout ✅
-- WritingStats + StatsFooter ✅
-- Keyboard shortcuts ❌
-- Sidebar (Phase 2) ❌
+- `main` - Protected, production-ready
+- `dev` - Integration branch
+- `feature/*` - Active development
 
 ---
 
@@ -125,37 +188,41 @@ Sources/Scribe/
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 1 | Focus Mode + Stats | In Progress |
-| 2 | Sidebar + Navigation | Planned |
-| 3 | Markdown Preview | Deferred |
-| 4 | LaTeX Rendering | Deferred |
+| 0 | Multi-vault Config | ✅ Complete (Jan 2) |
+| 1 | Inbox + Projects | ✅ Complete (Jan 5) |
+| 2 | Tags (#hashtags) | 📅 Next |
+| 3 | Wiki Links ([[links]]) | 📅 Week 4 |
+| 4 | Metadata + Polish | 📅 Week 5 |
 
 ---
 
 ## 🔧 Quick Commands
 
 ```bash
-# Build
-swift build
+# Build CLI
+swift build --product scribe-cli
 
-# Run (Xcode GUI)
-open Package.swift -a Xcode  # then ⌘R
+# Run CLI
+.build/debug/scribe-cli help
 
-# Clean
-swift package clean
+# Tests
+swift test                           # Unit tests
+bash Tests/test-phase-0-e2e.sh      # E2E tests
 
 # Database location
-~/Library/Application Support/Scribe/scribe.sqlite
+~/.config/scribe/.scribe-cli/config.json
+~/.config/scribe/.scribe-cli/vaults/
 ```
 
 ---
 
 ## ⚠️ Key Constraints
 
-1. **Keep backend untouched** - Data layer is solid
-2. **@MainActor for UI** - All view code on main thread
-3. **Services only** - Never access DatabaseManager directly
-4. **Tests disabled** - Swift Testing incompatible, needs XCTest migration
+1. **SwiftUI deferred** - Focus on CLI backend first
+2. **No GUI work** - Until backend complete
+3. **@MainActor for services** - All async/await
+4. **Tests required** - Phase completion needs unit + E2E tests
+5. **Documentation** - Each phase needs user guide
 
 ---
 
@@ -163,13 +230,29 @@ swift package clean
 
 | File | Purpose |
 |------|---------|
-| `CLAUDE.md` | Full dev guide (700 lines) |
-| `.STATUS` | Project metadata |
-| `TODO.md` | Task checklist |
-| `ROADMAP.md` | Timeline |
-| `docs/PRODUCT_REQUIREMENTS.md` | Vision |
-| `docs/development/REBUILD_PLAN_2026.md` | Implementation plan |
+| **PHASE_0_COMPLETE.md** | Phase 0 summary |
+| **VAULT_GUIDE.md** | User guide for vaults |
+| **ROADMAP.md** | Full development plan |
+| **.STATUS** | Current project state |
+| **TODO.md** | Task checklist |
 
 ---
 
-*Updated: 2026-01-01*
+## 🎓 Testing Strategy
+
+Each phase requires:
+
+1. **Unit Tests** - XCTest for models/services
+2. **E2E Tests** - Bash scripts for workflows
+3. **Manual Testing** - Real-world usage
+4. **Documentation** - User guides
+
+Example (Phase 0):
+
+- Unit: VaultConfigTests, ConfigServiceTests
+- E2E: 35+ test scenarios
+- Docs: VAULT_GUIDE.md
+
+---
+
+*Updated: 2026-01-05 (Phase 1 Complete)*

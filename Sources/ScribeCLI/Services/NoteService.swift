@@ -1,6 +1,7 @@
 import Foundation
 
 /// Clean note service - simple CRUD operations
+@MainActor
 final class NoteService {
     private let database: DatabaseManager
     
@@ -91,26 +92,6 @@ final class NoteService {
             return []
         }
         return try await database.searchNotes(query: query, projectId: projectId)
-    }
-    
-    // MARK: - Tags
-    
-    func fetchByTag(_ tag: String, projectId: String? = nil) async throws -> [Note] {
-        let allNotes = try await fetchAll(projectId: projectId)
-        return allNotes.filter { $0.tags.contains(tag.lowercased()) }
-    }
-    
-    func fetchAllTags() async throws -> [String: Int] {
-        let allNotes = try await fetchAll()
-        var tagCounts: [String: Int] = [:]
-        
-        for note in allNotes {
-            for tag in note.tags {
-                tagCounts[tag, default: 0] += 1
-            }
-        }
-        
-        return tagCounts
     }
     
     // MARK: - Helpers

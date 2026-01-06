@@ -1,119 +1,71 @@
 project: scribe-sw
 status: active
 priority: P1
-progress: 70
-version: 0.1.0-dev
-updated: 2026-01-01
-next: Test keyboard responsiveness in Xcode GUI → then add keyboard shortcuts (⌘N, ⌘B)
+progress: 60
+version: 0.2.0-cli
+updated: 2026-01-05
+next: Phase 2 - Tags & Search
 
-## Current Focus: Frontend Rebuild (Phases 1-2)
+## Current Focus: CLI Phase 2 - Tags & Search
 
-**Goal:** Transform basic UI into ADHD-friendly Focus + Navigator modes
-**Timeline:** 2 weeks (Jan 1-14, 2026)
-**Approach:** Keep backend untouched, rebuild/enhance frontend
+**Timeline:** Week 3 (Jan 6-12, 2026)
+**Goal:** Add #hashtag support and enhanced search
 
-**Phase 1 (Week 1):**
-- [x] Stats foundation (WritingStats model)
-- [x] Enhanced stats footer (5 metrics: word, timer, streak, today, goal)
-- [x] Focus Mode layout (EditorView + StatsFooter)
-- [ ] Editor enhancements (markdown awareness)
-- [ ] Remove toolbar chrome (pure Focus Mode)
-- [ ] Keyboard shortcuts (⌘B, ⌘N, ⌘W)
-- [x] Session persistence (UserDefaults)
+**Phase 0:** ✅ COMPLETE (Jan 2, 2026)
+- Multi-vault infrastructure
+- 6 vault commands
+- Hybrid config system
 
-**Phase 2 (Week 2):**
-- [ ] Sidebar structure (SidebarView, ProjectSection, RecentSection)
-- [ ] Navigation logic (project filtering, note selection)
-- [ ] Search/filter implementation
-- [ ] Animations & polish (smooth transitions)
+**Phase 1:** ✅ COMPLETE (Jan 5, 2026)
+- Quick capture (scribe-cli quick)
+- Inbox management (list, move)
+- Project creation with types
+- 34 unit tests + 21 E2E tests
 
-**Phase 3-4 (Deferred):**
-- Markdown preview (split view)
-- LaTeX rendering (MathJax integration)
+**Phase 2:** 📅 NEXT (Week 3)
+- Tag parsing from #hashtags
+- Tag commands (list, search, stats)
+- Enhanced search filters
+- 25+ new tests
 
-## Current Version: 0.1.0-dev (Clean Rebuild)
+**Build Status:** ✅ Clean (5.28s, 0 warnings)
+**Tests:** ✅ 55 passing (34 unit + 21 E2E)
+**Progress:** 60% backend, 0% GUI
 
-**Build Status:** ✅ Clean (0 warnings, 0 errors, 25s build time)
+## SwiftUI App Status
 
-**Backend:** 100% complete (620 lines, modern Swift)
-- DatabaseManager (Actor-based GRDB)
-- NoteService, ProjectService (async/await CRUD)
-- Models (Note, Project, ScribeError)
-- AppState (ObservableObject)
-
-**Frontend:** 40% complete (needs enhancement)
-- DesignSystem ✅ (matches vision)
-- Basic editor, stats, sidebar (need upgrade)
-
-**Distribution:**
-- Platform: macOS 14+ (Sonoma)
-- Stack: SwiftUI + GRDB + swift-markdown
-- Install: Development only (no distribution yet)
+**Status:** ⏸️ DEFERRED
+**Reason:** App hang on startup (P0 blocker)
+**Strategy:** CLI-first development until backend complete
 
 ## Recent Sessions
 
-### Jan 1, 2026 (Session 3) - Xcode Project & Bug Fixes
-- Created proper Xcode project (eliminates bundle identifier warnings)
-  - Installed xcodegen via Homebrew
-  - Created project.yml (XcodeGen specification)
-  - Created Scribe/Info.plist and Scribe.entitlements
-  - Generated Scribe.xcodeproj with `xcodegen`
-- Fixed critical bugs:
-  - CodingKey bug: Note.swift wordCount → "word_count" mapping
-  - Migration bug: Added v3 migration for project columns (color, icon, settings)
-  - Database crash: Removed old database with conflicting migration names
-- Deep cleaned project:
-  - Archived old CLI files (cli/ → archive/cli-tauri-version/)
-  - Removed outdated docs (CURRENT_STATUS.md, FRESH_START_SUMMARY.md, etc.)
-  - Removed empty directories (Dependencies/, Resources/)
-- Build: ✅ Clean (0 warnings, 0 errors, proper .app bundle)
+### Jan 5, 2026 - Phase 1 Complete
+- Implemented inbox commands (quick, list, move)
+- Enhanced project commands (create, list with IDs)
+- Created 34 unit tests + 21 E2E tests
+- Dogfooding test validates workflow
+- Merged to dev, branch pruned
+- Updated GEMINI.md
 
-### Jan 1, 2026 (Session 2) - Phase 1 Stats Foundation
-- Created WritingStats.swift model (160 lines)
-  - Session tracking (timer, word count)
-  - Daily tracking (today's words, goal progress)
-  - Streak calculation (consecutive writing days)
-  - UserDefaults persistence
-- Integrated WritingStats into AppState
-  - 1-second timer for live session duration updates
-  - Auto-save word count tracking
-- Created StatsFooter.swift (5 ADHD-friendly metrics)
-  - Word count, timer, streak, today's words, goal progress
-  - Visual progress bar for daily goal
-- Created EditorView.swift (distraction-free editor)
-  - Title + content TextEditor
-  - 1-second debounced auto-save
-  - Live word count updates
-- Updated MainView.swift (Focus Mode layout)
-  - Editor + StatsFooter composition
-  - Creates new note on launch if empty
-- Build: ✅ Clean (0 warnings, 0 errors)
-
-### Jan 1, 2026 (Session 1) - Complete Rebuild Planning
-- Audited current codebase (12 files, 1562 lines)
-- Created comprehensive rebuild plan (REBUILD_PLAN_2026.md)
-- Cleaned up 6 outdated planning docs
-- Confirmed decisions: Keep backend, rebuild UI, 2-week timeline
-- Template research (aiterm .STATUS, ROADMAP, CLAUDE.md)
-- Created documentation suite (.STATUS, ROADMAP, CLAUDE, TODO)
-- Ready to execute Phase 1
+### Jan 2, 2026 - Phase 0 Complete
+- Multi-vault infrastructure
+- Hybrid config system
+- 6 vault commands
+- Comprehensive testing
 
 ## Key Files
+- GEMINI.md - AI assistant knowledge base
+- phase_2_plan.md - Next phase implementation plan
+- ROADMAP.md - Full development timeline
+- TODO.md - Task tracking
 
-| File | Purpose |
-|------|---------|
-| docs/development/REBUILD_PLAN_2026.md | Master implementation plan |
-| docs/PRODUCT_REQUIREMENTS.md | Vision document |
-| docs/UI_REDESIGN_BRAINSTORM.md | UI/UX specifications |
-| docs/development/ARCHITECTURE.md | Technical architecture |
-| ROADMAP.md | Phased timeline |
-| CLAUDE.md | AI assistant guidance |
-| TODO.md | Task tracking |
-| project.yml | XcodeGen configuration |
-| Scribe.xcodeproj | Xcode project (generated) |
+## Known Issues
+- ⚠️ SwiftUI app hangs on startup (deferred)
+- ✅ CLI development proceeding smoothly
 
-## Links
-
-- **Repo:** Not yet published (local development)
-- **Docs:** docs/ directory
-- **Related:** Tauri version at ~/projects/dev-tools/scribe/
+## Upcoming Work
+**Phase 2:** Tags & Search (Week 3)
+- Parse #hashtags from content
+- Tag commands (list, search, stats)
+- Enhanced search with filters

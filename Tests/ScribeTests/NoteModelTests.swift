@@ -100,4 +100,46 @@ final class NoteModelTests: XCTestCase {
         let note = Note(id: "test-id-123")
         XCTAssertEqual(note.id, "test-id-123")
     }
+    
+    // MARK: - Tags
+    
+    func testTagsEmpty() {
+        let note = Note(title: "No tags here", content: "Just plain text")
+        XCTAssertEqual(note.tags, [])
+    }
+    
+    func testTagsSingle() {
+        let note = Note(title: "Research note", content: "This is about #research")
+        XCTAssertEqual(note.tags, ["research"])
+    }
+    
+    func testTagsMultiple() {
+        let note = Note(content: "Topics: #research #statistics #causal-inference")
+        XCTAssertEqual(note.tags, ["causal-inference", "research", "statistics"])
+    }
+    
+    func testTagsInTitle() {
+        let note = Note(title: "#meeting notes", content: "Discussion points")
+        XCTAssertEqual(note.tags, ["meeting"])
+    }
+    
+    func testTagsInBothTitleAndContent() {
+        let note = Note(title: "#research paper", content: "About #statistics and #causal-inference")
+        XCTAssertEqual(note.tags, ["causal-inference", "research", "statistics"])
+    }
+    
+    func testTagsDuplicate() {
+        let note = Note(content: "#research is important. More #research needed.")
+        XCTAssertEqual(note.tags, ["research"])
+    }
+    
+    func testTagsCaseInsensitive() {
+        let note = Note(content: "#Research #RESEARCH #research")
+        XCTAssertEqual(note.tags, ["research"])
+    }
+    
+    func testTagsSpecialChars() {
+        let note = Note(content: "#test-tag #another_tag #tag123")
+        XCTAssertEqual(note.tags, ["another_tag", "tag123", "test-tag"])
+    }
 }

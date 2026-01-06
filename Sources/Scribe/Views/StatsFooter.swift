@@ -19,14 +19,11 @@ struct StatsFooter: View {
                 .background(ScribeColors.border)
 
             // Session timer
-            // The hidden Text observes sessionTimerTick to force timer refresh
-            // without the old objectWillChange.send() that stole keyboard focus
             StatItem(
                 icon: "clock",
                 value: appState.writingStats.sessionDurationFormatted,
                 color: ScribeColors.accent
             )
-            .overlay(Text("\(appState.sessionTimerTick)").hidden())
 
             Divider()
                 .frame(height: 12)

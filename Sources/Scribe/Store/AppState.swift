@@ -19,6 +19,7 @@ final class AppState: ObservableObject {
     
     @Published var showSidebar: Bool = false
     @Published var showRightSidebar: Bool = false
+    @Published var selectedProjectId: String?
     
     // MARK: - Error Dialog State
     
@@ -35,16 +36,8 @@ final class AppState: ObservableObject {
 
     @Published var writingStats: WritingStats
     
-    /// Tick counter for session timer - incrementing this triggers UI update for timer only
-    /// Using a dedicated published property avoids calling objectWillChange.send() 
-    /// which was causing the entire view to re-render and steal keyboard focus
-    @Published private(set) var sessionTimerTick: Int = 0
-
     /// Tracks previous word count for calculating words added
     private var previousWordCount: Int = 0
-
-    /// Timer for updating session duration display
-    private var sessionTimer: AnyCancellable?
 
     // MARK: - Services
 
@@ -54,36 +47,19 @@ final class AppState: ObservableObject {
     // MARK: - Initialization
 
     init(noteService: NoteService, projectService: ProjectService) {
+        print("[AppState] Starting initialization...")
         self.noteService = noteService
         self.projectService = projectService
 
+        print("[AppState] Loading persisted stats...")
         // Load persisted stats
         self.writingStats = WritingStats.load()
+        print("[AppState] Stats loaded, starting new session...")
         writingStats.startNewSession()
+        print("[AppState] Session started, initialization complete")
 
-        // Start session timer (updates every second for live display)
-        startSessionTimer()
-
-        Task {
-            await loadData()
-        }
-    }
-
-    deinit {
-        sessionTimer?.cancel()
-    }
-
-    // MARK: - Session Timer
-
-    private func startSessionTimer() {
-        sessionTimer = Timer.publish(every: 1.0, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                // Increment tick counter to trigger UI update for timer display only
-                // This is more targeted than objectWillChange.send() which was 
-                // causing the entire view hierarchy to re-render and steal keyboard focus
-                self?.sessionTimerTick += 1
-            }
+        // Don't load data in init - wait for view to appear
+        // This prevents potential deadlocks during initialization
     }
     
     // MARK: - Data Loading
@@ -171,6 +147,30 @@ final class AppState: ObservableObject {
             
             if selectedNoteId == noteId {
                 selectedNoteId = notes.first?.id
+            }
+        } catch {
+            self.error = error as? ScribeError ?? .unknown(error)
+        }
+    }
+    
+    func moveNote(_ noteId: String, toProjectId: String?) async {
+        do {
+            var note = try await noteService.fetch(id: noteId)
+            
+            // Skip if note is already in target project
+            if note.projectId == toProjectId {
+                return
+            }
+            
+            // Update note's project (empty string means uncategorized)
+            note.projectId = toProjectId?.isEmpty ?? true ? nil : toProjectId
+            
+            // Save to database
+            try await noteService.save(note)
+            
+            // Update local state
+            if let index = notes.firstIndex(where: { $0.id == noteId }) {
+                notes[index] = note
             }
         } catch {
             self.error = error as? ScribeError ?? .unknown(error)

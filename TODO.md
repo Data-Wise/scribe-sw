@@ -1,87 +1,113 @@
 # TODO - Scribe SwiftUI
 
-Tasks and next steps for the Scribe SwiftUI project.
+Tasks and next steps for Scribe SwiftUI project.
 
 **Updated:** 2026-01-01
 **Version:** 0.1.0-dev (Active Rebuild)
 
 ---
 
-## CURRENT FOCUS: Phase 1 - Enhanced Focus Mode ⭐
+## CURRENT FOCUS: Phase 2.5 - Drag-and-Drop Complete ⭐
 
-**Timeline:** Week 1 (Jan 1-7, 2026)
-**Goal:** Working distraction-free editor with live stats
+**Timeline:** Week 2 (Jan 8-10, 2026)
+**Goal:** Professional sidebar interactions and drag-and-drop for notes
 
-### In Progress
+### Completed ✅
 
-- [ ] Create WritingStats model (Day 1)
-- [ ] Update AppState with stats tracking (Day 1-2)
-- [ ] Rebuild StatsFooter with 5 metrics (Day 2-3)
-- [ ] Add markdown awareness to editor (Day 3-4)
-- [ ] Remove toolbar chrome (Day 3-4)
-- [ ] Implement keyboard shortcuts (Day 5-6)
-- [ ] Add session persistence (Day 6-7)
-- [ ] Testing & refinement (Day 7)
+**Phase 1 (Week 1):**
 
-**See:** `docs/development/REBUILD_PLAN_2026.md` for full details
+- [x] WritingStats model
+- [x] StatsFooter with 5 metrics
+- [x] Focus Mode layout
+- [x] Keyboard shortcuts (⌘N, ⌘[, ⌘])
+- [x] Error dialog with auto-dismiss
+- [x] Session persistence
+- [x] 114 tests passing
+
+**Phase 2 (Week 1-2):**
+
+- [x] Left Sidebar (SidebarView, ProjectSection, NoteRow)
+- [x] Right Sidebar (Properties, Outline, Backlinks)
+- [x] Note selection from sidebar
+- [x] Project filtering
+- [x] Sidebar animations (150ms ease-in-out)
+- [x] 122 tests passing
+
+**Phase 2.5 (Week 2):**
+
+- [x] Editor area polish (markdown-aware, improved title handling)
+- [x] Sidebar enhancements (context menus, drag-drop, inline editing)
+- [x] **Drag-and-drop for notes** (Session 2, Jan 1, 2026)
+  - [x] Add .onDrag to NoteRow for drag functionality
+  - [x] Add .onDrop to ProjectSection for drop targets
+  - [x] Add .onDrop to UncategorizedSection
+  - [x] Add moveNote method to AppState (async, uses NoteService)
+  - [x] Visual feedback: drop targets highlight with accent color
+  - [x] Skip moves if note already in target project
+  - [x] Support moving notes to/from Uncategorized section
+  - [x] All 141 tests passing
+
+**Phase 3 (Session 1):**
+
+- [x] Test suite enhanced from 121 to 168 tests (+39%)
+- [x] EdgeCaseTests.swift (47 new tests)
+- [x] Enhanced WritingStatsTests (streak edge cases)
+- [x] Enhanced NoteModelTests (word count, timestamps, soft delete, Codable)
+- [x] Enhanced ProjectModelTests (computed properties, type properties)
+- [x] Enhanced E2EWorkflowTests (multi-note, wiki links, full-day workflows)
+- [x] Fixed AppStateTests (removed deprecated sessionTimerTick)
+- [x] Fixed timer focus issue (moved to local @State in StatsFooter)
+- [x] Fixed Resources reference in Package.swift
+- [x] Xcode project properly configured (both targets visible)
+- [x] Bundle identifier configured (com.datawise.Scribe)
+- [x] Created TEST_COVERAGE_SUMMARY.md
+- [x] All 168 tests passing (0 failures)
+- [x] Build: Clean (0 errors, 0 warnings, ~14s)
+- [x] NoteRow simplified (removed complex context menu for cleaner implementation)
+
+**Critical Fixes:**
+
+- [x] Timer no longer steals keyboard focus
+- [x] App typing works correctly
+- [x] Session timer updates live without UI disruption
+
+**See:** `docs/development/REBUILD_PLAN_2026.md` and `TEST_COVERAGE_SUMMARY.md` for full details
 
 ---
 
-## Immediate (This Week)
+## Immediate (Next Week)
 
-### Day 1-2: Stats Foundation
-- [ ] Create `Sources/Scribe/Models/WritingStats.swift`
-- [ ] Add stats properties to AppState (sessionStats, todayStats, streakStats)
-- [ ] Add stats timer to AppState (updates every 1s)
-- [ ] Add loadStats() / saveStats() to AppState (UserDefaults)
-- [ ] Add calculateStreak() logic
-- [ ] Rebuild `Sources/Scribe/Views/StatsFooter.swift`
-  - [ ] 📝 Word count metric
-  - [ ] ⏱ Session timer (formatted: "12m 34s")
-  - [ ] 🔥 Streak counter (days)
-  - [ ] ⚡ Today count
-  - [ ] 🎯 Goal progress bar
-- [ ] Test stats updates in real-time
+### Phase 4: Advanced Features (Future)
 
-### Day 3-4: Enhanced Editor
-- [ ] Add markdown awareness to EditorView
-  - [ ] Detect **bold**, *italic* as you type
-  - [ ] Detect [[wiki links]]
-  - [ ] Detect #tags
-  - [ ] Visual indicators (no full rendering)
-- [ ] Improve auto-save implementation
-  - [ ] 1 second debounce (cancel previous tasks)
-  - [ ] Visual indicator when saving
-  - [ ] Update word count on every change
-- [ ] Remove toolbar from MainView
-  - [ ] Delete .toolbar {} block
-  - [ ] Keyboard-only sidebar toggle
-- [ ] Add keyboard shortcut handlers
-  - [ ] ⌘B → Toggle sidebar with animation
-  - [ ] ⌘N → Create new note
-  - [ ] ⌘W → Close window (no save prompt)
-
-### Day 5-7: Polish & Testing
-- [ ] Add .commands {} menu items
-- [ ] Test session persistence (UserDefaults)
-- [ ] Test streak calculation (write 2 days, skip 1 day)
-- [ ] Test auto-save (type, wait 1s, verify saved)
-- [ ] Test keyboard shortcuts (all work smoothly)
-- [ ] Verify stats update in real-time
-- [ ] Performance check (no UI jank)
+- [x] Left Sidebar enhancements (drag-drop) ✅ COMPLETE
+- [ ] **Editor Area Polish**
+  - [ ] Implement Tab Bar with gradient accent
+  - [ ] Add Pinned Mission Control tab (⌘1)
+  - [ ] Add Breadcrumbs (Project > Title)
+  - [ ] Implement basic markdown syntax highlighting
+  - [ ] Move session timer to top bar/header
+- [ ] Additional keyboard shortcuts (⌘R, ⌘⌫, ⌘D, ⌘1-9)
+- [ ] Visual polish (Inter font, animations, skeletons)
 
 ---
 
-## Next Week (Phase 2)
+## Future Phases
 
-### Day 8-9: Sidebar Structure
-- [ ] Create `Sources/Scribe/Views/Components/Sidebar/SidebarView.swift`
-- [ ] Create `Sources/Scribe/Views/Components/Sidebar/ProjectSection.swift`
-- [ ] Create `Sources/Scribe/Views/Components/Sidebar/RecentSection.swift`
-- [ ] Add search field to sidebar
+### Phase 3: Markdown Preview
+
+- [ ] Create PreviewPane component (WebView)
+- [ ] Integrate swift-markdown
+- [ ] Add ⌘P toggle for split view
+
+### Phase 4: LaTeX Rendering
+
+- [ ] Integrate MathJax in WebView
+- [ ] Detect `$` and `$$` syntax
+- [ ] Render math blocks
 - [ ] Wire up to MainView
 
 ### Day 10-11: Navigation Logic
+
 - [ ] Add selectedProjectId to AppState
 - [ ] Add filteredNotes computed property
 - [ ] Implement project filtering (click project → filter)
@@ -89,6 +115,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 - [ ] Implement search (instant filter by title/content)
 
 ### Day 12-14: Animations & Polish
+
 - [ ] Smooth sidebar toggle (0.2s easeInOut)
 - [ ] Auto-hide sidebar on editor click
 - [ ] Hover states on sidebar items
@@ -101,6 +128,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 ## Future Phases (Deferred)
 
 ### Phase 3: Markdown Preview (Week 3-4)
+
 - [ ] Create PreviewPane component
 - [ ] Integrate swift-markdown (markdown → HTML)
 - [ ] Add WebView for rendering
@@ -109,6 +137,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 - [ ] Custom CSS for preview styling
 
 ### Phase 4: LaTeX Rendering (Week 5+)
+
 - [ ] Integrate MathJax in WebView
 - [ ] Detect $...$ and $$...$$ syntax
 - [ ] Render inline math
@@ -121,6 +150,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 ## Technical Debt
 
 ### Testing
+
 - [ ] Re-enable test target (migrate Swift Testing → XCTest)
 - [ ] Add unit tests for WritingStats
 - [ ] Add unit tests for streak calculation
@@ -128,6 +158,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 - [ ] Target: 80%+ coverage
 
 ### Documentation
+
 - [ ] Add inline code comments
 - [ ] Document WritingStats model
 - [ ] Document stats calculation logic
@@ -135,6 +166,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 - [ ] Keyboard shortcuts reference card
 
 ### Performance
+
 - [ ] Profile app launch time (target < 1s)
 - [ ] Profile note open time (target < 100ms)
 - [ ] Profile auto-save (target < 50ms lag)
@@ -179,6 +211,7 @@ Tasks and next steps for the Scribe SwiftUI project.
 ## Long-term Ideas (v2.0+)
 
 See `docs/PRODUCT_REQUIREMENTS.md` for full vision:
+
 - Plugin system (user extensions)
 - Custom themes (user colors/fonts)
 - AI writing assistant (Claude API integration)
