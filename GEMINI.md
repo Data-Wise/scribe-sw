@@ -65,7 +65,18 @@
 - 34 unit tests + 21 E2E tests
 - Dogfooding test (real-world workflow)
 
-### Next: Phase 2 - Tags & Search (Week 3)
+### Phase 2: Tags & Search ✅ COMPLETE (Jan 5, 2026)
+
+**Delivered:**
+
+- Tag parsing from `#hashtags` in content
+- `scribe-cli tags list/search/stats` commands
+- Enhanced search with `--tag`, `--project`, `--title-only` filters
+- 18 new tests (8 model + 10 commands)
+- E2E test (15 scenarios)
+- Dogfooding test (non-interactive)
+
+### Next: Phase 3 - Wiki Links (Week 4)
 
 ---
 
@@ -171,10 +182,11 @@ scribe-cli vault context
 ## 📊 Project Status
 
 **Phase 0:** ✅ Complete (Jan 2, 2026)
-**Phase 1:** ✅ Complete (Jan 5, 2026)  
-**Progress:** 60% backend, 0% GUI
-**Build:** ✅ Clean (5.28s)
-**Tests:** ✅ 55 tests passing (34 unit + 21 E2E)
+**Phase 1:** ✅ Complete (Jan 5, 2026)
+**Phase 2:** ✅ Complete (Jan 5, 2026)  
+**Progress:** 70% backend, 0% GUI
+**Build:** ✅ Clean
+**Tests:** ✅ 73+ tests passing
 
 **Git Workflow:**
 
@@ -190,8 +202,8 @@ scribe-cli vault context
 |-------|-------|--------|
 | 0 | Multi-vault Config | ✅ Complete (Jan 2) |
 | 1 | Inbox + Projects | ✅ Complete (Jan 5) |
-| 2 | Tags (#hashtags) | 📅 Next |
-| 3 | Wiki Links ([[links]]) | 📅 Week 4 |
+| 2 | Tags (#hashtags) | ✅ Complete (Jan 5) |
+| 3 | Wiki Links ([[links]]) | 📅 Next |
 | 4 | Metadata + Polish | 📅 Week 5 |
 
 ---
@@ -255,4 +267,4 @@ Example (Phase 0):
 
 ---
 
-*Updated: 2026-01-05 (Phase 1 Complete)*
+*Updated: 2026-01-05 (Phase 2 Complete)*

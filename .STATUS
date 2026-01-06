@@ -1,15 +1,15 @@
 project: scribe-sw
 status: active
 priority: P1
-progress: 60
-version: 0.2.0-cli
+progress: 70
+version: 0.3.0-cli
 updated: 2026-01-05
-next: Phase 2 - Tags & Search
+next: Phase 3 - Wiki Links
 
-## Current Focus: CLI Phase 2 - Tags & Search
+## Current Focus: CLI Phase 3 - Wiki Links
 
-**Timeline:** Week 3 (Jan 6-12, 2026)
-**Goal:** Add #hashtag support and enhanced search
+**Timeline:** Week 4 (Jan 6-12, 2026)
+**Goal:** Add `[[Note Title]]` linking between notes
 
 **Phase 0:** ✅ COMPLETE (Jan 2, 2026)
 - Multi-vault infrastructure
@@ -22,15 +22,21 @@ next: Phase 2 - Tags & Search
 - Project creation with types
 - 34 unit tests + 21 E2E tests
 
-**Phase 2:** 📅 NEXT (Week 3)
+**Phase 2:** ✅ COMPLETE (Jan 5, 2026)
 - Tag parsing from #hashtags
-- Tag commands (list, search, stats)
+- Tags commands (list, search, stats)
 - Enhanced search filters
-- 25+ new tests
+- 18 new tests + E2E + dogfooding
 
-**Build Status:** ✅ Clean (5.28s, 0 warnings)
-**Tests:** ✅ 55 passing (34 unit + 21 E2E)
-**Progress:** 60% backend, 0% GUI
+**Phase 3:** 📅 NEXT (Week 4)
+- Wiki link parsing `[[Note Title]]`
+- Link commands (list, backlinks)
+- Note linking and navigation
+- 20+ new tests
+
+**Build Status:** ✅ Clean
+**Tests:** ✅ 73+ passing
+**Progress:** 70% backend, 0% GUI
 
 ## SwiftUI App Status
 
@@ -39,6 +45,14 @@ next: Phase 2 - Tags & Search
 **Strategy:** CLI-first development until backend complete
 
 ## Recent Sessions
+
+### Jan 5, 2026 - Phase 2 Complete
+- Implemented tag parsing from #hashtags
+- Created TagsCommands (list, search, stats)
+- Enhanced SearchCommands with filters
+- Created 18 new tests + E2E + dogfooding
+- Merged to dev, then to main
+- Updated all documentation
 
 ### Jan 5, 2026 - Phase 1 Complete
 - Implemented inbox commands (quick, list, move)
@@ -56,16 +70,16 @@ next: Phase 2 - Tags & Search
 
 ## Key Files
 - GEMINI.md - AI assistant knowledge base
-- phase_2_plan.md - Next phase implementation plan
 - ROADMAP.md - Full development timeline
 - TODO.md - Task tracking
+- .STATUS - Current project state
 
 ## Known Issues
 - ⚠️ SwiftUI app hangs on startup (deferred)
 - ✅ CLI development proceeding smoothly
 
 ## Upcoming Work
-**Phase 2:** Tags & Search (Week 3)
-- Parse #hashtags from content
-- Tag commands (list, search, stats)
-- Enhanced search with filters
+**Phase 3:** Wiki Links (Week 4)
+- Parse [[Note Title]] from content
+- Link commands (list, backlinks)
+- Note navigation
