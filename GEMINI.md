@@ -53,7 +53,19 @@
 └── cli.json                    # CLI-specific
 ```
 
-### Next: Phase 1 - Inbox & Projects (Week 2)
+### Phase 1: Inbox & Projects ✅ COMPLETE (Jan 5, 2026)
+
+**Delivered:**
+
+- Quick capture (`scribe-cli quick <content>`)
+- Inbox management (`scribe-cli inbox [list|move]`)
+- Project creation (`scribe-cli project create <name> [type]`)
+- Enhanced project list (IDs + emojis)
+- Partial ID matching
+- 34 unit tests + 21 E2E tests
+- Dogfooding test (real-world workflow)
+
+### Next: Phase 2 - Tags & Search (Week 3)
 
 ---
 
@@ -159,9 +171,10 @@ scribe-cli vault context
 ## 📊 Project Status
 
 **Phase 0:** ✅ Complete (Jan 2, 2026)
-**Progress:** 50% backend, 0% GUI
-**Build:** ✅ Clean (1.98s)
-**Tests:** ✅ Unit + E2E passing
+**Phase 1:** ✅ Complete (Jan 5, 2026)  
+**Progress:** 60% backend, 0% GUI
+**Build:** ✅ Clean (5.28s)
+**Tests:** ✅ 55 tests passing (34 unit + 21 E2E)
 
 **Git Workflow:**
 
@@ -175,9 +188,9 @@ scribe-cli vault context
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 0 | Multi-vault Config | ✅ Complete |
-| 1 | Inbox + Projects | 📅 Next |
-| 2 | Tags (#hashtags) | 📅 Week 3 |
+| 0 | Multi-vault Config | ✅ Complete (Jan 2) |
+| 1 | Inbox + Projects | ✅ Complete (Jan 5) |
+| 2 | Tags (#hashtags) | 📅 Next |
 | 3 | Wiki Links ([[links]]) | 📅 Week 4 |
 | 4 | Metadata + Polish | 📅 Week 5 |
 
@@ -242,4 +255,4 @@ Example (Phase 0):
 
 ---
 
-*Updated: 2026-01-02 (Phase 0 Complete)*
+*Updated: 2026-01-05 (Phase 1 Complete)*
