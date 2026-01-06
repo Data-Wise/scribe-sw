@@ -62,6 +62,9 @@ func executeCommand(_ command: String, args: [String]) async throws {
     case "quick":
         try await InboxCommands.quick(noteService, args: args)
         
+    case "tags", "tag":
+        try await executeTagsCommand(noteService, args: args)
+        
     case "help", "--help", "-h":
         HelpCommands.printUsage()
         
@@ -156,6 +159,32 @@ func executeInboxCommand(_ noteService: NoteService, _ projectService: ProjectSe
     default:
         print("❌ Unknown inbox subcommand: \(subcommand)")
         print("   Valid subcommands: list, move")
+    }
+}
+
+@MainActor
+func executeTagsCommand(_ noteService: NoteService, args: [String]) async throws {
+    guard let subcommand = args.first else {
+        try await TagsCommands.list(noteService)
+        return
+    }
+    
+    let subcommandArgs = Array(args.dropFirst())
+    
+    switch subcommand {
+    case "list", "ls":
+        try await TagsCommands.list(noteService)
+    case "search":
+        guard let tag = subcommandArgs.first else {
+            print("❌ Usage: scribe-cli tags search <tag>")
+            return
+        }
+        try await TagsCommands.search(noteService, tag: tag)
+    case "stats":
+        try await TagsCommands.stats(noteService)
+    default:
+        print("❌ Unknown tags subcommand: \(subcommand)")
+        print("   Valid subcommands: list, search, stats")
     }
 }
 

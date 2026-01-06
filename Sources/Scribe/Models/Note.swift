@@ -39,6 +39,29 @@ struct Note: Identifiable, Codable, Hashable, Sendable {
             .replacingOccurrences(of: "\n", with: " ")
             .trimmingCharacters(in: .whitespaces)
     }
+    
+    var tags: [String] {
+        let pattern = #"#([a-zA-Z0-9_-]+)"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return []
+        }
+        
+        let fullText = title + " " + content
+        let nsString = fullText as NSString
+        let matches = regex.matches(
+            in: fullText,
+            range: NSRange(location: 0, length: nsString.length)
+        )
+        
+        let tags = matches.compactMap { match -> String? in
+            guard match.numberOfRanges > 1 else { return nil }
+            let range = match.range(at: 1)
+            return nsString.substring(with: range).lowercased()
+        }
+        
+        // Return unique tags, sorted alphabetically
+        return Array(Set(tags)).sorted()
+    }
 }
 
 // MARK: - GRDB Conformance

@@ -18,6 +18,7 @@ enum HelpCommands {
           delete <id>          Delete a note
           search <query>       Full-text search (FTS5)
           project [cmd]        Project management (list, create)
+          tags [cmd]           Tag management (list, search, stats)
           stats                Show statistics
           vault <cmd>          Vault management (create, list, switch, context, ...)
           inbox [cmd]          Inbox management (list, move)
@@ -33,6 +34,9 @@ enum HelpCommands {
           scribe-cli list
           scribe-cli edit abc123
           scribe-cli search "keyword"
+          scribe-cli quick "Meeting note #research"
+          scribe-cli tags list
+          scribe-cli tags search research
         
         """)
     }
