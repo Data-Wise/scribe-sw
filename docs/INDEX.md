@@ -1,5 +1,12 @@
 # Scribe CLI
 
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/Data-Wise/scribe-sw/releases)
+[![Build](https://img.shields.io/github/actions/workflow/status/Data-Wise/scribe-sw/docs.yml?branch=main&label=docs)](https://github.com/Data-Wise/scribe-sw/actions)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/Data-Wise/scribe-sw/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey.svg)](https://www.apple.com/macos/)
+[![Homebrew](https://img.shields.io/badge/homebrew-tap-orange.svg)](https://github.com/Data-Wise/homebrew-tap)
+[![Swift](https://img.shields.io/badge/swift-5.9%2B-orange.svg)](https://swift.org)
+
 <div class="grid cards" markdown>
 
 - :rocket:{ .lg .middle } __Zero Friction__
