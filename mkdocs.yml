@@ -1,0 +1,84 @@
+site_name: Scribe CLI
+site_description: ADHD-friendly note-taking CLI with multi-vault support
+site_author: Data-Wise
+site_url: https://data-wise.github.io/scribe-sw
+
+repo_name: Data-Wise/scribe-sw
+repo_url: https://github.com/Data-Wise/scribe-sw
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+plugins:
+  - search
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: installation.md
+    - Quick Start: quickstart.md
+  - User Guide:
+    - Commands: commands.md
+    - Vaults: vaults.md
+    - Organization: organization.md
+    - Shell Completions: completions.md
+  - Examples: examples.md
+  - Reference:
+    - CLI Reference: reference/cli.md
+    - Configuration: reference/config.md
+  - About:
+    - Changelog: CHANGELOG.md
+    - Contributing: contributing.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Data-Wise/scribe-sw
+    - icon: fontawesome/brands/github
+      link: https://github.com/Data-Wise
+  version:
+    provider: mike

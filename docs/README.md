@@ -1,54 +1,91 @@
-# Scribe SwiftUI Native - Documentation
+# Scribe CLI Documentation
 
-Welcome to the Scribe SwiftUI Native documentation.
-
----
-
-## 📚 Documentation Index
-
-### Getting Started
-
-- **[getting-started.md](getting-started.md)** - 5-minute quick start guide
-- **[project-overview.md](project-overview.md)** - Project context and relationship to Tauri version
-
-### Development
-
-- **[development/swift-guide.md](development/swift-guide.md)** - Swift/SwiftUI beginner guide
-- **[development/next-steps.md](development/next-steps.md)** - Implementation roadmap
-
-### Reference
-
-- **[reference/database-schema.md](reference/database-schema.md)** - SQLite database schema
-- **[contributing.md](contributing.md)** - How to contribute
+**Complete documentation for ADHD-friendly note-taking**
 
 ---
 
-## 🎯 Quick Navigation
-
-**New to Swift?** → Start with [development/swift-guide.md](development/swift-guide.md)  
-**Want to build?** → Follow [getting-started.md](getting-started.md)  
-**Want to contribute?** → Read [contributing.md](contributing.md)  
-**Need schema reference?** → See [reference/database-schema.md](reference/database-schema.md)
-
----
-
-## 📁 Documentation Structure
+## 📂 Documentation Structure
 
 ```
 docs/
-├── README.md                          # This file
-├── getting-started.md                 # Quick start
-├── project-overview.md                # Project context
-├── contributing.md                    # Contribution guide
-├── development/
-│   ├── swift-guide.md                # Swift/SwiftUI tutorial
-│   └── next-steps.md                 # Roadmap
-└── reference/
-    └── database-schema.md            # Database reference
+├── INDEX.md                    # Documentation hub (start here!)
+├── tutorials/
+│   └── GETTING_STARTED.md      # 5-minute quick start
+├── guides/
+│   └── USER_GUIDE.md           # Complete feature documentation
+├── reference/
+│   ├── QUICK_REFERENCE.md      # One-page cheat sheet
+│   └── COMMANDS.md             # All commands organized
+├── workflows/
+│   └── README.md               # Visual flowcharts (9 workflows)
+└── website/
+    └── README.md               # Main website/README
 ```
 
 ---
 
-**Project:** Scribe SwiftUI Native  
-**Location:** `~/projects/dev-tools/scribe-sw/`  
-**Future Repo:** `github.com/Data-Wise/scribe-native`
+## 🚀 Start Here
+
+**New to Scribe?**
+
+1. [INDEX.md](INDEX.md) - Choose your learning path
+2. [Getting Started Tutorial](tutorials/GETTING_STARTED.md) - 5-minute setup
+3. [Quick Reference](reference/QUICK_REFERENCE.md) - Print and keep!
+
+---
+
+## 📚 Key Documents
+
+### For Users
+
+- **[INDEX.md](INDEX.md)** - Documentation hub with navigation
+- **[Getting Started](tutorials/GETTING_STARTED.md)** - First-time setup
+- **[User Guide](guides/USER_GUIDE.md)** - Complete documentation
+- **[Workflows](workflows/README.md)** - 9 visual flowcharts
+
+### Quick Reference
+
+- **[Quick Reference Card](reference/QUICK_REFERENCE.md)** - One-page overview
+- **[Commands Cheat Sheet](reference/COMMANDS.md)** - All commands
+
+### Website
+
+- **[Main README](website/README.md)** - Project homepage
+
+---
+
+## 🎯 Documentation Features
+
+✨ **ADHD-Friendly Design:**
+
+- Concise and scannable
+- Visual flowcharts
+- One-page printables
+- Quick navigation
+
+📊 **9 Workflow Diagrams:**
+
+- Quick Capture Flow
+- Research Workflow
+- Teaching Prep
+- Daily Review
+- Multi-Vault Context Switch
+- Tag Organization
+- Search & Discovery
+- Project-Based Workflow
+- Weekly Maintenance
+
+---
+
+## 🛠️ For Contributors
+
+All documentation follows:
+
+- **Markdown format** for portability
+- **Mermaid diagrams** for workflows
+- **ADHD principles** (concise, actionable, visual)
+- **Consistent structure** across guides
+
+---
+
+**Browse all docs:** [INDEX.md](INDEX.md)
